@@ -47,6 +47,26 @@ for n, d in sources.items():
             if html.unescape(b.text).strip('"') not in values:
                 problems.append(f"{n}: colour for '{b.text}' but no such {field}")
 
+# 2b. Tableau drops a palette unless its field is declared on the data source (column + column-instance)
+palette_cols = {}
+for n, d in sources.items():
+    inst = {c.get("name") for c in d.findall("column-instance")}
+    cols = {c.get("name") for c in d.findall("column")}
+    palette_cols[n] = set()
+    for enc in d.iter("encoding"):
+        f = enc.get("field")
+        if f not in inst or "[" + f.split(":")[1] + "]" not in cols:
+            problems.append(f"{n}: palette field {f} not declared, Tableau would ignore its colours")
+        palette_cols[n] |= {m.get("to").lower() for m in enc.iter("map")}
+
+# 2c. the colour key in each chart title uses only that chart's palette colours
+for w in root.iter("worksheet"):
+    ds = w.find(".//datasource-dependencies").get("datasource")
+    for run in w.find("layout-options").iter("run"):
+        col = (run.get("fontcolor") or "").lower()
+        if col and col != "#555555" and col not in palette_cols[ds]:
+            problems.append(f"{w.get('name')}: title key colour {col} is not in its palette")
+
 # 3. every field a chart uses is declared and exists in its data source
 for name, ws in sheets.items():
     dep = ws.find(".//datasource-dependencies")

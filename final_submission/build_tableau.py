@@ -152,6 +152,7 @@ cn = res.groupby("circuit_short")["raceId"].nunique()
 hm = (res[res["driver"].isin(top10) & res["circuit_short"].isin(cn[cn >= 8].index) & res["is_classified"]]
       .groupby(["driver", "circuit_short"])["position"].agg(["mean", "size"]).reset_index())
 hm = hm[hm["size"] >= 3].rename(columns={"circuit_short": "circuit", "mean": "avg_finish", "size": "finishes"})
+hm["avg_finish"] = hm["avg_finish"].round(1)            # one decimal for the cell labels; facts use unrounded values
 DATA["heat"] = ("driver_circuit.csv", hm)
 
 # 13. wins and the car
@@ -230,8 +231,13 @@ def datasource(name):
                     for (ds, c), role in GEO.items() if ds == name)
     style = ""
     if name in COLOURS:
+        # Tableau only keeps a colour palette whose field is declared on the data source as a column plus a
+        # column-instance; without them it silently drops the palette and falls back to its default colours.
         field, fn = COLOURS[name]
-        maps = "".join(f"<map to='{col}'><bucket>{escape(chr(34) + v + chr(34))}</bucket></map>" for v, col in fn(df).items())
+        geo += (f"\n      <column datatype='{types[field]}' name='[{field}]' role='dimension' type='nominal' />"
+                f"\n      <column-instance column='[{field}]' derivation='None' name='[none:{field}:nk]' pivot='key' type='nominal' />")
+        maps = "".join(f"<map to='{col}'><bucket>{escape(chr(34) + v + chr(34), {chr(34): '&quot;'})}</bucket></map>"
+                       for v, col in fn(df).items())
         style = (f"      <style><style-rule element='mark'><encoding attr='color' field='[none:{field}:nk]' type='palette'>"
                  f"{maps}</encoding></style-rule></style>")
     return f"""    <datasource caption='{name}' inline='true' name='federated.{name}' version='18.1'>
@@ -279,9 +285,28 @@ def ref(ds, f):
     return f"[federated.{ds}].{inst(f)}"
 
 
+def keyof(ds, *values, rename=None, other=None):
+    """Colour key for a chart title, read from the same palette the marks use so the two cannot disagree."""
+    field, fn = COLOURS[ds]
+    pal = fn(DATA[ds][1])
+    out = [((rename or {}).get(v, v), pal[v]) for v in values]
+    return out + [(other, LIGHT)] if other else out
+
+
+def title_xml(title, key):
+    """Bold finding on line 1; on line 2 a coloured square per category (key = [(label, colour or None)])."""
+    runs = f"<run bold='true' fontsize='12'>{escape(title)}{'&#10;' if key else ''}</run>"
+    for label, col in key or []:
+        if col:
+            runs += f"<run fontcolor='{col}' fontsize='12'>&#9632; </run>"
+        runs += f"<run fontcolor='#555555' fontsize='10'>{escape(label)}      </run>"
+    return runs
+
+
 def worksheet(name, ds, fields, rows, cols, mark, title, color=None, size=None, text=None, lod=None,
-              filt=None, sort=None, axes=(), geo=False):
-    """rows/cols/color/size/text/lod: field specs from `fields`. axes: (shelf, field, title, extra attributes)."""
+              filt=None, sort=None, axes=(), geo=False, key=None, mark_color=None):
+    """rows/cols/color/size/text/lod: field specs from `fields`. axes: (shelf, field, title, extra attributes).
+    mark_color: one fixed colour for charts without a colour field."""
     dep_cols = "\n".join(
         f"            <column datatype='{dt}' name='[{c}]' role='{role}' "
         + (f"semantic-role='{GEO[(ds, c)]}' " if (ds, c) in GEO else "") + f"type='{t}' />"
@@ -310,8 +335,11 @@ def worksheet(name, ds, fields, rows, cols, mark, title, color=None, size=None, 
     enc = "".join(f"<{tag} column='{ref(ds, f)}' />" for tag, f in [("color", color), ("size", size), ("text", text), ("lod", lod)] if f)
     enc = f"<encodings>{enc}</encodings>" if enc else ""
     maps = "<mapsources><mapsource name='Tableau' /></mapsources>" if geo else ""
+    pane_fmt = (f"<format attr='mark-color' value='{mark_color}' />" if mark_color else "") + \
+               ("<format attr='mark-labels-show' value='true' />" if text else "")
+    pane_style = f"<style><style-rule element='mark'>{pane_fmt}</style-rule></style>" if pane_fmt else ""
     return f"""    <worksheet name={quoteattr(name)}>
-      <layout-options><title><formatted-text><run bold='true' fontsize='12'>{escape(title)}</run></formatted-text></title></layout-options>
+      <layout-options><title><formatted-text>{title_xml(title, key)}</formatted-text></title></layout-options>
       <table>
         <view>
           <datasources><datasource caption='{ds}' name='federated.{ds}' /></datasources>
@@ -328,6 +356,7 @@ def worksheet(name, ds, fields, rows, cols, mark, title, color=None, size=None, 
             <view><breakdown value='auto' /></view>
             <mark class='{mark}' />
             {enc}
+            {pane_style}
           </pane>
         </panes>
         <rows>{ref(ds, rows)}</rows>
@@ -340,30 +369,36 @@ W = {}                                            # worksheet name -> XML
 # ---- the six story charts
 lap, posn, drv, race, team_t = D("lap", "integer", "qk"), M("position", "integer", "avg"), D("driver"), D("race"), D("team")
 W["Race trace"] = worksheet("Race trace", "trace", [lap, posn, drv, race, team_t], posn, lap, "Line",
-                            f"Hook: {F('H.changes')} position changes, and the pole-sitter still won (red = Hamilton, black = Rosberg)",
-                            color=drv, lod=team_t, filt=(race, "2016 Chinese GP"),
+                            f"Hook: {F('H.changes')} position changes, and the pole-sitter still won",
+                            key=keyof("trace", "Lewis Hamilton", "Nico Rosberg", other="other drivers"), color=drv, lod=team_t, filt=(race, "2016 Chinese GP"),
                             axes=[("rows", posn, "Position (1 = leading)", "reverse='true'"), ("cols", lap, "Lap (0 = starting grid)", "")])
 cc, rr_ = D("circuit"), M("r")
-W["Grid vs finish by circuit"] = worksheet("Grid vs finish by circuit", "circuit", [cc, rr_], cc, rr_, "Circle",
+W["Grid vs finish by circuit"] = worksheet("Grid vs finish by circuit", "circuit", [cc, rr_], cc, rr_, "Bar",
                                            f"Act 1: {F('A1.top_circuit')} locks the order in (grid-finish link r by circuit)",
-                                           sort=(cc, rr_, "DESC"), axes=[("cols", rr_, "Link between grid and finish (r)", "")])
+                                           sort=(cc, rr_, "DESC"), axes=[("cols", rr_, "Link between grid and finish (r)", "")],
+                                           mark_color=DARK)
 step, chg, timing = D("step", "integer", "qk"), M("change", "real", "avg"), D("timing")
 W["Undercut"] = worksheet("Undercut", "undercut", [step, chg, timing], chg, step, "Line",
                           f"Act 2: early stoppers lose {F('A2.early_lost2_round')} places, then win back {F('A2.early_back')}",
+                          key=keyof("undercut", "Early", "Middle", "Late",
+                                    rename={"Early": "pitted early", "Middle": "pitted mid-race", "Late": "pitted late"}),
                           color=timing, axes=[("rows", chg, "Places gained (+) or lost (-)", ""),
                                               ("cols", step, "Laps relative to the first pit stop", "")])
 wx, swp = D("who_extra"), M("slower_wins_pct", "integer", "avg")
 W["Teammate duel"] = worksheet("Teammate duel", "pairs", [wx, swp], swp, wx, "Bar",
                                "Act 3: whoever makes the extra stop usually loses the teammate duel", color=wx,
+                               key=keyof("pairs", "Slower qualifier made the extra stop", "Same number of stops",
+                                         "Teammate made the extra stop"),
                                axes=[("rows", swp, "Slower qualifier finishes ahead (%)", "")])
 yr_s, shr, tm_s = D("year", "integer", "ok"), M("share"), D("team")
 W["Points share"] = worksheet("Points share", "share", [yr_s, shr, tm_s], shr, yr_s, "Line",
                               "Act 4: three eras in ten seasons (share of all constructor points, %)", color=tm_s,
+                              key=keyof("share", "Mercedes", "Red Bull", "McLaren", "Ferrari", other="other teams"),
                               axes=[("rows", shr, "Share of all constructor points (%)", "")])
 yr_r, dnfp = D("year", "integer", "ok"), M("dnf_pct", "integer", "avg")
 W["DNF rate"] = worksheet("DNF rate", "results", [yr_r, dnfp], dnfp, yr_r, "Line",
                           f"Act 4: cars break down half as often ({F('A4.dnf_2015_r')} to {F('A4.dnf_2024_r')})",
-                          axes=[("rows", dnfp, "Genuine DNF rate (%)", "")])
+                          axes=[("rows", dnfp, "Genuine DNF rate (%)", "")], mark_color=RED)
 # ---- new charts that explain F1
 lat, lng, nr, tag, ccal = M("lat", "real", "avg"), M("lng", "real", "avg"), M("races", "integer"), D("tag"), D("circuit")
 W["Where F1 races"] = worksheet("Where F1 races", "calendar", [lat, lng, nr, tag, ccal], lat, lng, "Circle",
@@ -372,28 +407,35 @@ W["Where F1 races"] = worksheet("Where F1 races", "calendar", [lat, lng, nr, tag
 gslot, wp, grp = D("grid", "integer", "ok"), M("win_pct", "real", "avg"), D("group")
 W["Win chance by grid slot"] = worksheet("Win chance by grid slot", "gridwin", [gslot, wp, grp], wp, gslot, "Bar",
                                          f"Start on pole and you win {F('T.win_p1')} of the time; the front row wins {F('T.front_row')}",
+                                         key=keyof("gridwin", "Front row (1st-2nd)", "Rest of the grid"),
                                          color=grp, axes=[("rows", wp, "Races won from this starting slot (%)", ""),
                                                           ("cols", gslot, "Starting position (grid)", "")])
 fpos, fpts, whov = D("position", "integer", "ok"), M("points", "real", "avg"), D("who")
 W["Points per finish"] = worksheet("Points per finish", "points", [fpos, fpts, whov], fpts, fpos, "Bar",
                                    "How scoring works: only the top ten score, 25 points for a win", color=whov,
+                                   key=keyof("points", "Winner", "Others", rename={"Others": "other finishers"}),
                                    axes=[("rows", fpts, "Points scored", ""), ("cols", fpos, "Finishing position", "")])
 yr_t, sshare, stops = D("year", "integer", "ok"), M("share"), D("stops")
 W["Pit strategy by season"] = worksheet("Pit strategy by season", "strategy", [yr_t, sshare, stops], sshare, yr_t, "Bar",
                                         f"Pit strategy swings between seasons: one-stop finishers {F('T.one_2016')} (2016), "
                                         f"{F('T.one_2018')} (2018), {F('T.one_2024')} (2024)", color=stops,
+                                        key=keyof("strategy", "1 stop", "2 stops", "3+ stops"),
                                         axes=[("rows", sshare, "Share of finishers (%)", "")])
 yr_c, rate, cause = D("year", "integer", "ok"), M("rate"), D("cause")
 W["Why cars retire"] = worksheet("Why cars retire", "causes", [yr_c, rate, cause], rate, yr_c, "Bar",
                                  f"Cars break less, drivers still crash: car failures {F('T.fail_2015')} to {F('T.fail_2024')} of starts",
+                                 key=keyof("causes", "Car failure", "Crash or contact", "Tyre or wheel", "Other or not stated"),
                                  color=cause, axes=[("rows", rate, "Share of all starts that ended in a DNF (%)", "")])
 hd, hc, havg = D("driver"), D("circuit"), M("avg_finish", "real", "avg")
 W["Driver x circuit"] = worksheet("Driver x circuit", "heat", [hd, hc, havg], hd, hc, "Square",
                                   f"The driver row matters more than the track column ({F('A4.hm_row_range')} vs "
-                                  f"{F('A4.hm_col_range')} places; lower = better)", color=havg, text=havg)
+                                  f"{F('A4.hm_col_range')} places)", color=havg, text=havg,
+                                  key=[("number = average finishing place; lower and lighter = better", None)])
 wd, wcar, wwins = D("driver"), D("car"), M("wins", "integer")
 W["Wins and the car"] = worksheet("Wins and the car", "wins", [wd, wcar, wwins], wd, wwins, "Bar",
                                   f"{F('A4.wins_champ_car')} of all race wins went to that season's champion team",
+                                  key=keyof("wins", "Champion team's car", "Other car", rename={"Champion team's car": "that season's champion team",
+                                                                                               "Other car": "any other team"}),
                                   color=wcar, sort=(wd, wwins, "DESC"), axes=[("cols", wwins, "Race wins, 2015-2024", "")])
 tt, tp = D("team"), M("points")
 W["Misleading (cut axis)"] = worksheet("Misleading (cut axis)", "title", [tt, tp], tp, tt, "Bar",
@@ -419,10 +461,16 @@ def sheet_zone(zid, name, x, y, w, h):
     return f"<zone h='{h}' id='{zid}' name={quoteattr(name)} w='{w}' x='{x}' y='{y}' />"
 
 
-def dashboard(name, zones, w=1500, h=1000):
+def dashboard(name, zones, w=1500, h=1000, auto=False):
+    """Range sizing (as in Tableau's own World Indicators sample): the dashboard shrinks to fit the story frame
+    (about 1500 x 820) instead of showing scrollbars. The minimum is what Tableau Public renders on its own, so it is
+    kept large enough for every label (at 1000 x 600 the heatmap numbers turn into '##').
+    auto=True: fill whatever space it is given (story cards)."""
+    size = ("<size sizing-mode='automatic' />" if auto else
+            f"<size maxheight='{h}' maxwidth='{w}' minheight='780' minwidth='1450' sizing-mode='range' />")
     return f"""    <dashboard name={quoteattr(name)}>
       <style />
-      <size maxheight='{h}' maxwidth='{w}' minheight='{h}' minwidth='{w}' />
+      {size}
       <zones>
         <zone h='100000' id='2' type='layout-basic' w='100000' x='0' y='0'>
           {"".join(zones)}
@@ -490,7 +538,14 @@ STORY = [
     ("Ethics", f"Same numbers, two stories: a cut axis makes a {F('A5.gap_pct')} gap look {F('A5.visual_ratio')} times bigger."),
     ("F1 Dashboard", "Your turn: click a circuit or a season and watch the other charts change."),
 ]
-points = "\n".join(f"                <story-point caption={quoteattr(c)} captured-sheet={quoteattr(s)} id='{i}' />"
+# A worksheet placed straight into a story shows no title, so its finding and colour key would be lost. Each chart
+# in the story therefore sits in its own one-chart dashboard (a "story card", hidden from the tabs) that shows both.
+CARDS = {}
+for sheet, _ in STORY:
+    if sheet in W:
+        CARDS[sheet] = f"{sheet} (story)"
+        DASH[CARDS[sheet]] = dashboard(CARDS[sheet], [sheet_zone(3, sheet, 0, 0, 100000, 100000)], auto=True)
+points = "\n".join(f"                <story-point caption={quoteattr(c)} captured-sheet={quoteattr(CARDS.get(s, s))} id='{i}' />"
                    for i, (s, c) in enumerate(STORY, 1))
 story = f"""    <dashboard name='How F1 works' type='storyboard'>
       <layout-options><title><formatted-text><run>How F1 works: a race, read as a chain of cause and effect</run></formatted-text></title></layout-options>
@@ -500,8 +555,8 @@ story = f"""    <dashboard name='How F1 works' type='storyboard'>
         <zone h='100000' id='2' type='layout-basic' w='100000' x='0' y='0'>
           <zone h='100000' id='1' param='vert' removable='false' type='layout-flow' w='100000' x='0' y='0'>
             <zone h='5000' id='3' type='title' w='100000' x='0' y='0' />
-            <zone fixed-size='110' h='12000' id='4' is-fixed='true' paired-zone-id='5' removable='false' type='flipboard-nav' w='100000' x='0' y='5000' />
-            <zone h='83000' id='5' paired-zone-id='4' removable='false' type='flipboard' w='100000' x='0' y='17000'>
+            <zone fixed-size='150' h='15000' id='4' is-fixed='true' paired-zone-id='5' removable='false' type='flipboard-nav' w='100000' x='0' y='5000' />
+            <zone h='80000' id='5' paired-zone-id='4' removable='false' type='flipboard' w='100000' x='0' y='20000'>
               <flipboard active-id='1' nav-type='caption' show-nav-arrows='true'>
                 <story-points>
 {points}
@@ -531,15 +586,23 @@ actions = "\n".join([
            {"field-captions": "team", "target": "F1 Dashboard"}, on="on-hover"),
 ])
 
-win = []
+# Tab order = window order: the story opens first, then the four dashboards. The 15 single-chart sheets are
+# hidden (hidden='true', as Tableau writes it), so the published page shows 5 tabs; right-click a tab ->
+# "Unhide All Sheets" in Tableau to edit one.
+win = ["    <window class='dashboard' maximized='true' name='How F1 works'><viewpoints /><active id='-1' /></window>"]
+FIT_WIDTH = {"Grid vs finish by circuit"}      # 32 circuit rows: keep rows readable and let the chart scroll
+boards = [("F1 in 60 seconds", ["Where F1 races", "Win chance by grid slot", "Points per finish"], False),
+          ("F1 Dashboard", main, False), ("Deep dive", deep, False),
+          ("Ethics", ["Misleading (cut axis)", "Honest (axis from 0)"], False)]
+boards += [(card, [sheet], True) for sheet, card in CARDS.items()]
+for n, zones_of, hidden in boards:
+    vps = "".join(f"<viewpoint name={quoteattr(s)}><zoom type='{'fit-width' if s in FIT_WIDTH else 'entire-view'}' /></viewpoint>"
+                  for s in zones_of)
+    win.append(f"    <window class='dashboard'{' hidden=' + chr(39) + 'true' + chr(39) if hidden else ''} name={quoteattr(n)}>"
+               f"<viewpoints>{vps}</viewpoints><active id='-1' /></window>")
 for n in W:
-    win.append(f"    <window class='worksheet' name={quoteattr(n)}><cards><edge name='left'><strip size='160'>"
+    win.append(f"    <window class='worksheet' hidden='true' name={quoteattr(n)}><cards><edge name='left'><strip size='160'>"
                f"<card type='pages' /><card type='filters' /><card type='marks' /></strip></edge></cards></window>")
-for n, zones_of in [("F1 in 60 seconds", ["Where F1 races", "Win chance by grid slot", "Points per finish"]),
-                    ("F1 Dashboard", main), ("Deep dive", deep), ("Ethics", ["Misleading (cut axis)", "Honest (axis from 0)"])]:
-    vps = "".join(f"<viewpoint name={quoteattr(s)}><zoom type='entire-view' /></viewpoint>" for s in zones_of)
-    win.append(f"    <window class='dashboard' name={quoteattr(n)}><viewpoints>{vps}</viewpoints><active id='-1' /></window>")
-win.append("    <window class='dashboard' maximized='true' name='How F1 works'><viewpoints /><active id='-1' /></window>")
 
 twb = f"""<?xml version='1.0' encoding='utf-8' ?>
 <workbook original-version='18.1' source-build='2024.2.0 (20242.24.0807.0327)' source-platform='mac' version='18.1' xmlns:user='http://www.tableausoftware.com/xml/user'>
@@ -590,4 +653,4 @@ with zipfile.ZipFile(OUT / "F1_Dashboard.twbx", "w", zipfile.ZIP_DEFLATED) as z:
         if f.is_file():
             z.write(f, f.relative_to(work).as_posix())
 print(f"wrote {OUT / 'F1_Dashboard.twbx'}: {len(DATA)} data sources, {len(W)} worksheets, "
-      f"{len(DASH)} dashboards, a {len(STORY)}-point story")
+      f"{len(DASH) - len(CARDS)} dashboards, a {len(STORY)}-point story ({len(CARDS)} hidden story cards)")
