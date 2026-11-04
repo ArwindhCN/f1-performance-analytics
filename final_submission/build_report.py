@@ -206,7 +206,7 @@ for lead, val in [("Student: ", "Arwindh C N"), ("Roll No.: ", "CB.SC.U4CSE24207
     para(val, bold_lead=lead, size=11, after=3)
 para("", after=40)
 para("Companion files: F1_Story_Notebook.ipynb (analysis, every number), F1_Dashboard.html (interactive dashboard), "
-     "F1_Final_Presentation.pptx (slides), verification_log.md, Viva_Cheatsheet.md.", size=9, color=GREY)
+     "tableau/F1_Dashboard.twbx (Tableau story and dashboards), F1_Presentation.pdf (slides), verification_log.md.", size=9, color=GREY)
 page_break()
 
 # ------------------------------------------------------------------ contents
@@ -624,7 +624,7 @@ bullets([
 # ------------------------------------------------------------------ appendix A
 doc.add_heading("Appendix A. Consistency with the Primary Review", level=1)
 para("Every chart planned in the Primary Review is delivered. Where the form changed, the reason is given. "
-     "To reproduce everything from the 14 raw CSVs, run make_all.sh (see README.md in the submission folder).")
+     "To reproduce everything from the 14 raw CSVs, run make_all.sh (see the repository README).")
 table(["Planned (Primary Review)", "Delivered", "Change and reason"], [
     ["1. Driver championship performance: line chart", "Figure 12, season points by driver (Plotly)", "Same form; made interactive"],
     ["2. Constructor performance: bar chart", "Figure 9, points-share eras; Figure 16 bars",

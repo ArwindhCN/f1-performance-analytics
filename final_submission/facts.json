@@ -1044,8 +1044,98 @@
   "text": "3",
   "cell": "C.1"
  },
+ "T.win_p1": {
+  "value": 52.63157894736842,
+  "text": "53%",
+  "cell": "T.1"
+ },
+ "T.win_p2": {
+  "value": 24.637681159420293,
+  "text": "25%",
+  "cell": "T.1"
+ },
+ "T.win_p3": {
+  "value": 10.526315789473683,
+  "text": "11%",
+  "cell": "T.1"
+ },
+ "T.front_row": {
+  "value": 77.03349282296651,
+  "text": "77%",
+  "cell": "T.1"
+ },
+ "T.win_from_5plus": {
+  "value": 8.61244019138756,
+  "text": "9%",
+  "cell": "T.1"
+ },
+ "T.one_2016": {
+  "value": 15.66579634464752,
+  "text": "16%",
+  "cell": "T.2"
+ },
+ "T.one_2018": {
+  "value": 63.8235294117647,
+  "text": "64%",
+  "cell": "T.2"
+ },
+ "T.one_2024": {
+  "value": 38.97911832946635,
+  "text": "39%",
+  "cell": "T.2"
+ },
+ "T.two_2024": {
+  "value": 45.243619489559165,
+  "text": "45%",
+  "cell": "T.2"
+ },
+ "T.fail_2015": {
+  "value": 10.582010582010582,
+  "text": "10.6%",
+  "cell": "T.3"
+ },
+ "T.fail_2024": {
+  "value": 3.1315240083507305,
+  "text": "3.1%",
+  "cell": "T.3"
+ },
+ "T.crash_2015": {
+  "value": 5.82010582010582,
+  "text": "5.8%",
+  "cell": "T.3"
+ },
+ "T.crash_2024": {
+  "value": 5.427974947807933,
+  "text": "5.4%",
+  "cell": "T.3"
+ },
+ "T.fail_drop": {
+  "value": 70.4070981210856,
+  "text": "70%",
+  "cell": "T.3"
+ },
+ "T.n_circuits": {
+  "value": 32,
+  "text": "32",
+  "cell": "T.4"
+ },
+ "T.n_countries": {
+  "value": 28,
+  "text": "28",
+  "cell": "T.4"
+ },
+ "T.top_circuit": {
+  "value": "Austria",
+  "text": "Austria",
+  "cell": "T.4"
+ },
+ "T.top_circuit_races": {
+  "value": 12,
+  "text": "12",
+  "cell": "T.4"
+ },
  "D.size_mb": {
-  "value": 5.918504,
+  "value": 5.918876,
   "text": "5.9",
   "cell": "D.1"
  },
@@ -1115,13 +1205,13 @@
   "cell": "D.2"
  },
  "F.n_charts": {
-  "value": 15,
-  "text": "15",
+  "value": 17,
+  "text": "17",
   "cell": "F.1"
  },
  "F.n_plotly": {
-  "value": 0,
-  "text": "0",
+  "value": 2,
+  "text": "2",
   "cell": "F.1"
  },
  "F.n_static": {

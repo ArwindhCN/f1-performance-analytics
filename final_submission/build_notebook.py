@@ -1347,6 +1347,66 @@ Go back to the «H.race» and read it again, this time as a strategist.
 **The «H.changes» position changes were never random. They were a chain of cause and effect, and now you can read it.**
 """)
 
+# =============================================================== TABLEAU STORY EXTRAS
+md("""
+---
+## Extra findings for the Tableau story
+The Tableau version of the dashboard tells the same story as a guided **Story** that first explains how F1 works.
+`Cells T.1–T.4` compute four extra findings it uses. The Tableau data files are built from the same logic
+by `build_tableau.py`, which checks its numbers against these.
+""")
+
+code(r"""
+cell("T.1", "How often each starting position wins")
+g = results.dropna(subset=["grid"])
+win_by_grid = g.groupby("grid").agg(starts=("raceId", "size"), win=("is_win", "mean"), podium=("is_podium", "mean"))
+display((win_by_grid.head(10) * [1, 100, 100]).round(1))
+wins = results[results["position"] == 1]
+fact("T.win_p1", win_by_grid.loc[1, "win"] * 100, "{:.0f}%")
+fact("T.win_p2", win_by_grid.loc[2, "win"] * 100, "{:.0f}%")
+fact("T.win_p3", win_by_grid.loc[3, "win"] * 100, "{:.0f}%")
+fact("T.front_row", (wins["grid"] <= 2).mean() * 100, "{:.0f}%")
+fact("T.win_from_5plus", (wins["grid"] >= 5).mean() * 100, "{:.0f}%")
+""")
+
+code(r"""
+cell("T.2", "Pit-stop strategy by season: share of finishers by number of stops")
+st2 = race_level[race_level["raceId"].isin(PIT_RACE_IDS) & race_level["is_classified"] & (race_level["n_stops"] >= 1)].copy()
+st2["stops"] = st2["n_stops"].clip(upper=3).astype(int).map({1: "1 stop", 2: "2 stops", 3: "3+ stops"})
+strategy = (st2.groupby(["year", "stops"]).size() / st2.groupby("year").size() * 100).unstack()
+display(strategy.round(1))
+fact("T.one_2016", strategy.loc[2016, "1 stop"], "{:.0f}%"); fact("T.one_2018", strategy.loc[2018, "1 stop"], "{:.0f}%")
+fact("T.one_2024", strategy.loc[2024, "1 stop"], "{:.0f}%"); fact("T.two_2024", strategy.loc[2024, "2 stops"], "{:.0f}%")
+""")
+
+code(r"""
+cell("T.3", "Why cars retire: genuine DNFs by cause, as a share of all starts")
+def dnf_cause(status):
+    s = status.lower()
+    if any(k in s for k in ["collision", "accident", "spun", "damage", "debris"]):
+        return "Crash or contact"
+    if any(k in s for k in ["puncture", "tyre", "wheel"]):
+        return "Tyre or wheel"
+    if any(k in s for k in ["retired", "withdrew", "illness", "disqualified", "excluded", "seat"]):
+        return "Other or not stated"
+    return "Car failure"
+causes = (results[results["is_dnf"]].assign(cause=lambda d: d["status"].map(dnf_cause))
+          .groupby(["year", "cause"]).size() / results.groupby("year").size() * 100).unstack().fillna(0)
+display(causes.round(1))
+fact("T.fail_2015", causes.loc[2015, "Car failure"], "{:.1f}%"); fact("T.fail_2024", causes.loc[2024, "Car failure"], "{:.1f}%")
+fact("T.crash_2015", causes.loc[2015, "Crash or contact"], "{:.1f}%"); fact("T.crash_2024", causes.loc[2024, "Crash or contact"], "{:.1f}%")
+fact("T.fail_drop", (1 - causes.loc[2024, "Car failure"] / causes.loc[2015, "Car failure"]) * 100, "{:.0f}%")
+""")
+
+code(r"""
+cell("T.4", "Where F1 races: the 2015-2024 calendar")
+cal = races.groupby(["circuitId", "circuit_short", "country"]).agg(races=("raceId", "nunique")).reset_index()
+top = cal.sort_values("races", ascending=False).iloc[0]
+fact("T.n_circuits", len(cal)); fact("T.n_countries", cal["country"].nunique())
+fact("T.top_circuit", top["circuit_short"]); fact("T.top_circuit_races", int(top["races"]))
+display(cal.sort_values("races", ascending=False).head(8))
+""")
+
 # =============================================================== DASHBOARD
 md("""
 ---

@@ -39,12 +39,13 @@ ALLOWED = {str(y) for y in range(2014, 2027)} | {str(i) for i in range(0, 13)} |
     "14", "16", "17", "20", "21", "22", "24", "25", "26", "40", "50", "60", "90", "95", "100", "1.5", "1.96", "8"}
 
 sources = {}
-doc = Document(HERE / "F1_Final_Report.docx")
-txt = [p.text for p in doc.paragraphs]
-for t in doc.tables:
-    for row in t.rows:
-        txt += [c.text for c in row.cells]
-sources["report"] = txt
+if (HERE / "F1_Final_Report.docx").exists():
+    doc = Document(HERE / "F1_Final_Report.docx")
+    txt = [p.text for p in doc.paragraphs]
+    for tb in doc.tables:
+        for row in tb.rows:
+            txt += [c.text for c in row.cells]
+    sources["report"] = txt
 for deck, label in [("F1_Final_Presentation.pptx", "slides"), ("F1_Review_Presentation.pptx", "review slides")]:
     if not (HERE / deck).exists():
         continue
@@ -57,7 +58,8 @@ for deck, label in [("F1_Final_Presentation.pptx", "slides"), ("F1_Review_Presen
                 txt += [cell.text for row in sh.table.rows for cell in row.cells]
         txt.append(sl.notes_slide.notes_text_frame.text)
     sources[label] = txt
-sources["viva"] = (HERE / "Viva_Cheatsheet.md").read_text().splitlines()
+if (HERE / "Viva_Cheatsheet.md").exists():
+    sources["viva"] = (HERE / "Viva_Cheatsheet.md").read_text().splitlines()
 nb = nbformat.read(HERE / "F1_Story_Notebook.ipynb", as_version=4)
 sources["notebook prose"] = [c.source for c in nb.cells if c.cell_type == "markdown"]
 

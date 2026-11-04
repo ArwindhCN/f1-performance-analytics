@@ -154,9 +154,31 @@ def notes(slide, t):
     slide.notes_slide.notes_text_frame.text = "\n".join(lines)
 
 
-DECO = SL / "deco_bump_dark.png"          # dark race trace drawn by build_slides.py
-if not DECO.exists():
-    raise SystemExit("Run build_slides.py first (it draws charts/slides/deco_bump_dark.png).")
+# Dark race-trace graphic for the title slide, drawn from the hook race's lap data.
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import pandas as pd
+DECO = SL / "deco_bump_dark.png"
+_lt, _res = pd.read_csv(HERE / "data" / "clean" / "lap_times.csv"), pd.read_csv(HERE / "data" / "clean" / "results.csv")
+_hid = int(_res.loc[_res["race_label"] == F("H.race"), "raceId"].iloc[0])
+_hr = _res[_res["raceId"] == _hid].set_index("driverId")
+_tr = _lt[_lt["raceId"] == _hid].pivot(index="lap", columns="driverId", values="position")
+_tr.loc[0] = _hr["grid"]
+_tr = _tr.sort_index()
+_ham, _ros = (_hr.index[_hr["driverRef"] == n][0] for n in ("hamilton", "rosberg"))
+_fig, _ax = plt.subplots(figsize=(7.2, 5.0), facecolor="#111111")
+_ax.set_facecolor("#111111")
+for _d in _tr.columns:
+    if _d not in (_ham, _ros):
+        _ax.plot(_tr.index, _tr[_d], color="#3A3A3A", lw=1.3)
+_ax.plot(_tr.index, _tr[_ros], color="#FFFFFF", lw=2.4)
+_ax.plot(_tr.index, _tr[_ham], color="#C8102E", lw=3)
+_ax.invert_yaxis()
+_ax.axis("off")
+SL.mkdir(parents=True, exist_ok=True)
+_fig.savefig(DECO, dpi=200, bbox_inches="tight", pad_inches=0.05, facecolor="#111111")
+plt.close(_fig)
 
 # ------------------------------------------------------------------ simple speaker notes: WHAT and WHY
 NOTES = [
