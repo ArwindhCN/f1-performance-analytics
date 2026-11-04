@@ -1,0 +1,17 @@
+{
+ "H.2": "charts/H2_bump_chart_hook_race.png",
+ "A1.1": "charts/A1_1_grid_vs_finish_pooled.png",
+ "A1.2": "charts/A1_2_circuit_lollipop.png",
+ "A2.2": "charts/A2_2_undercut_slope.png",
+ "A3.2": "charts/A3_2_stops_vs_finish.png",
+ "A3.3": "charts/A3_3_gap_vs_stopdiff.png",
+ "A3.4": "charts/A3_4_teammate_duel.png",
+ "A3.5": "charts/A3_5_distress_signal.png",
+ "A4.2": "charts/A4_2_dnf_rate.png",
+ "A4.3": "charts/A4_3_wins_by_driver.png",
+ "A4.5": "charts/A4_5_driver_circuit_heatmap.png",
+ "A4.6": "charts/A4_6_consistency_vs_points.png",
+ "A5.1": "charts/A5_1_misleading_truncated_axis.png",
+ "A5.2": "charts/A5_2_honest_full_axis.png",
+ "A5.3": "charts/A5_3_misleading_vs_honest.png"
+}

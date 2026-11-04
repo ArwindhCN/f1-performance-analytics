@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F1 Strategy Dashboard 2015–2024</title>
+<style>
+:root{--ink:#1A1A1A;--ink2:#4D4D4D;--muted:#767676;--light:#C9C9C9;--grid:#EBEBEB;--red:#C8102E;--bg:#FFFFFF;--panel:#FAFAF9}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,"Helvetica Neue",Helvetica,system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.4}
+header,main,footer,.filters .inner{max-width:1280px;margin:0 auto;padding-left:28px;padding-right:28px}
+header{padding-top:26px;padding-bottom:10px}
+h1{font-size:27px;margin:0 0 6px;letter-spacing:-.01em}
+.sub{color:var(--ink2);font-size:14px;margin:0}
+.who{color:var(--muted);font-size:12.5px;margin:6px 0 0}
+.filters{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.97);border-bottom:1px solid var(--grid);border-top:1px solid var(--grid)}
+.filters .inner{padding-top:10px;padding-bottom:10px;display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+label{font-size:12px;color:var(--ink2);display:flex;flex-direction:column;gap:4px}
+select,button{font:inherit;font-size:14px;padding:6px 8px;border:1px solid var(--light);border-radius:6px;background:#fff;color:var(--ink);min-width:160px;max-width:100%}
+button{min-width:0;cursor:pointer}
+button:hover{border-color:var(--ink2)}
+button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:18px 0 6px}
+.kpi{border:1px solid var(--grid);border-radius:10px;padding:12px 14px;background:var(--panel);min-width:0}
+.kpi .l{font-size:12px;color:var(--ink2)}
+.kpi .v{font-size:26px;font-weight:600;margin-top:4px}
+.kpi .d{font-size:12px;color:var(--muted);margin-top:2px}
+section.act{border-top:2px solid var(--ink);margin-top:34px;padding-top:12px}
+.tag{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--red);text-transform:uppercase}
+h2{font-size:21px;margin:4px 0 4px}
+.lede{color:var(--ink2);font-size:14px;max-width:920px;margin:0 0 12px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.card{border:1px solid var(--grid);border-radius:10px;padding:6px 6px 2px;background:#fff;min-width:0}
+.chart{width:100%;height:420px}
+.tall{height:600px}
+.wide{height:500px}
+.call{margin:12px 0 0;padding:10px 14px;border-left:4px solid var(--red);background:var(--panel);font-size:14px}
+.note{font-size:12px;color:var(--muted);margin:4px 6px 6px}
+.ctrl{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin:0 0 10px}
+.ethics{font-size:14px;color:var(--ink2);max-width:920px}
+footer{padding-top:16px;padding-bottom:40px;color:var(--muted);font-size:12px;border-top:1px solid var(--grid);margin-top:36px}
+@media (max-width:900px){.row{grid-template-columns:minmax(0,1fr)}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+ header,main,footer,.filters .inner{padding-left:16px;padding-right:16px}.tall{height:640px}}
+</style>
+<script>/*__PLOTLYJS__*/</script>
+</head>
+<body>
+<header>
+  <h1>Formula 1, read as a chain of cause and effect</h1>
+  <p class="sub">An interactive companion to the story notebook: five acts, one pit-wall strategist, ten seasons (2015–2024).</p>
+  <p class="who">Arwindh C N · CB.SC.U4CSE24207 · 23CSE353 Data Visualisation · Built with Plotly from F1_Story_Notebook.ipynb</p>
+</header>
+
+<div class="filters" role="region" aria-label="Filters">
+  <div class="inner">
+    <label>Season<select id="f-season"></select></label>
+    <label>Constructor<select id="f-constructor"></select></label>
+    <label>Driver<select id="f-driver"></select></label>
+    <label>Circuit<select id="f-circuit"></select></label>
+    <button id="reset" type="button">Reset filters</button>
+    <span class="note" id="scope"></span>
+  </div>
+</div>
+
+<main>
+  <div class="kpis" aria-live="polite">
+    <div class="kpi"><div class="l">Races in view</div><div class="v" id="k-races">–</div><div class="d" id="k-races-d"></div></div>
+    <div class="kpi"><div class="l">Grid–finish correlation (r)</div><div class="v" id="k-r">–</div><div class="d" id="k-r-d"></div></div>
+    <div class="kpi"><div class="l">Early stoppers, 10 laps after</div><div class="v" id="k-und">–</div><div class="d" id="k-und-d"></div></div>
+    <div class="kpi"><div class="l">Slower teammate wins duel</div><div class="v" id="k-duel">–</div><div class="d" id="k-duel-d"></div></div>
+    <div class="kpi"><div class="l">Genuine DNF rate</div><div class="v" id="k-dnf">–</div><div class="d" id="k-dnf-d"></div></div>
+  </div>
+
+  <section class="act" id="hook">
+    <div class="tag">Hook</div>
+    <h2>A race is a chain of events, not a result</h2>
+    <p class="lede">Every line is one car, lap by lap (lap 0 = starting grid). Dots are pit stops. Black = the winner,
+      red = the biggest climber (or the driver you pick). The default race, the <span data-f="H.race"></span>, had the most
+      position changes of all <span data-f="H.n_races"></span> races (<span data-f="H.changes"></span>).</p>
+    <div class="ctrl"><label>Race<select id="f-race"></select></label><span class="note" id="race-note"></span></div>
+    <div class="card"><div id="c-hook" class="chart wide"></div></div>
+    <p class="call"><b>The call you would make:</b> do not read a race from the result. Read it from the moves.</p>
+  </section>
+
+  <section class="act" id="act1">
+    <div class="tag">Act 1</div>
+    <h2>Saturday decides more than you think</h2>
+    <p class="lede">Where you start is strongly linked to where you finish (pooled r = <span data-f="A1.pooled_r"></span>),
+      but not equally everywhere: <span data-f="A1.top_circuit"></span> locks the order in (r = <span data-f="A1.top_r"></span>),
+      <span data-f="A1.bottom_circuit"></span> lets it go (r = <span data-f="A1.bottom_r"></span>, only <span data-f="A1.bottom_races"></span> races).</p>
+    <div class="row">
+      <div class="card"><div id="c-circ" class="chart tall"></div><p class="note">All seasons (circuits with 40+ classified finishes). Bar = 95% confidence range. Selected circuit in red.</p></div>
+      <div class="card"><div id="c-grid" class="chart tall"></div><p class="note">Uses every filter. Each dot is one classified finish (jittered so dots do not hide each other).</p></div>
+    </div>
+    <p class="call"><b>The call you would make:</b> at high-r circuits treat qualifying as the race; at low-r circuits a poor grid slot can still be fixed on Sunday.</p>
+  </section>
+
+  <section class="act" id="act2">
+    <div class="tag">Act 2</div>
+    <h2>The stop that costs four places and wins back two</h2>
+    <p class="lede">Track position around each driver's first pit stop. Early stoppers drop <span data-f="A2.early_lost2"></span> places,
+      then win back <span data-f="A2.early_back"></span> as rivals stop; late stoppers win back only <span data-f="A2.late_back"></span>.</p>
+    <div class="card"><div id="c-und" class="chart"></div><p class="note">Uses every filter. Grey lines = all <span data-f="A2.n"></span> first stops, for comparison. Whiskers = 95% confidence range.</p></div>
+    <p class="call"><b>The call you would make:</b> if the car can survive two or three exposed laps, stop first.</p>
+  </section>
+
+  <section class="act" id="act3">
+    <div class="tag">Act 3 · the reveal</div>
+    <h2>The hidden alarm: an extra stop is a symptom, not a weapon</h2>
+    <p class="lede">Teammates drive the same car. With an extra stop, the slower qualifier beats the teammate only
+      <span data-f="A3.rate_extra"></span> of the time, against <span data-f="A3.rate_no"></span> without one (z = <span data-f="A3.z"></span>).
+      Qualifying far behind does not make teams gamble on stops (r = <span data-f="A3.r_gap"></span>): the extra stop signals trouble.</p>
+    <div class="row">
+      <div class="card"><div id="c-duel" class="chart"></div></div>
+      <div class="card"><div id="c-who" class="chart"></div></div>
+    </div>
+    <p class="note">Season, constructor and circuit filters apply. A driver filter keeps pairs where that driver is either teammate. Bars = 95% confidence range (Wilson).</p>
+    <p class="call"><b>The call you would make:</b> when a car suddenly needs a stop the plan did not have, treat it as an alarm and protect the other car's result.</p>
+  </section>
+
+  <section class="act" id="act4">
+    <div class="tag">Act 4</div>
+    <h2>The car sets the ceiling</h2>
+    <p class="lede">Mercedes held <span data-f="A4.mer_2015"></span> of all points in 2015 and <span data-f="A4.mer_2023"></span> in 2023;
+      Red Bull rose to <span data-f="A4.rbr_2023"></span>; McLaren climbed from <span data-f="A4.mcl_2015"></span> to <span data-f="A4.mcl_2024"></span>.
+      Genuine DNFs fell from <span data-f="A4.dnf_2015"></span> to <span data-f="A4.dnf_2024"></span>.</p>
+    <div class="card"><div id="c-share" class="chart wide"></div><p class="note">Pick a constructor to draw it in red; pick a season to shade it.</p></div>
+    <div class="row" style="margin-top:16px">
+      <div class="card"><div id="c-dnf" class="chart"></div></div>
+      <div class="card"><div id="c-pts" class="chart"></div></div>
+    </div>
+    <p class="call"><b>The call you would make:</b> every edge from Acts 1–3 lives inside the ceiling the car sets. Plan the season around the car.</p>
+  </section>
+
+  <section class="act" id="act5">
+    <div class="tag">Act 5</div>
+    <h2>What the data cannot tell you: the same numbers, two stories</h2>
+    <p class="lede">Constructor championship points for the top two teams of the selected season (2024 if none).
+      The misleading version cuts the y-axis; the honest version starts at zero.</p>
+    <div class="ctrl"><button id="b-mis" type="button" class="on">Misleading (cut axis)</button><button id="b-hon" type="button">Honest (axis from 0)</button></div>
+    <div class="row">
+      <div class="card"><div id="c-eth" class="chart"></div></div>
+      <div class="ethics" id="eth-text"></div>
+    </div>
+    <p class="call"><b>The limits:</b> every finding here is a correlation in historical records, not an experiment. The data has no tyre
+      compounds, weather, safety-car periods or team radio, so the <i>why</i> behind an event is always outside it.</p>
+  </section>
+</main>
+<footer>
+  Source: Ergast-lineage Formula 1 data (Jolpica F1 API lineage), seasons 2015–2024, <span data-f="P.n_races"></span> races. Classified = has a finishing position;
+  genuine DNF = any status other than "Finished" or "+N Lap(s)". Pit-lane starts are treated as missing grid.
+  Every headline number on this page is read from the notebook's facts register (facts.json).
+</footer>
+
+<script>
+const D = /*__DATA__*/null;
+const C = {ink:"#1A1A1A", ink2:"#4D4D4D", muted:"#767676", light:"#C9C9C9", grid:"#EBEBEB", red:"#C8102E", dot:"#9A9A9A"};
+const CFG = {displaylogo:false, responsive:true, modeBarButtonsToRemove:["lasso2d","select2d","autoScale2d","toggleSpikelines"]};
+const FONT = {family:"Arial, Helvetica, sans-serif", size:12, color:C.ink2};
+
+function rows(obj){const k=Object.keys(obj), n=obj[k[0]].length, out=new Array(n);
+  for(let i=0;i<n;i++){const r={}; for(const c of k) r[c]=obj[c][i]; out[i]=r;} return out;}
+const RACES=rows(D.races), RES=rows(D.results), UND=rows(D.undercut), PAIRS=rows(D.pairs), CF=rows(D.cfinal),
+      DF=rows(D.dfinal), CR=rows(D.circuit_r), STOPS=rows(D.stops), DRV=rows(D.drivers), CON=rows(D.constructors);
+const raceById=Object.fromEntries(RACES.map(r=>[r.raceId,r]));
+const drvById=Object.fromEntries(DRV.map(d=>[d.driverId,d]));
+const conById=Object.fromEntries(CON.map(c=>[c.constructorId,c]));
+const resByRace={}; RES.forEach(r=>(resByRace[r.raceId]=resByRace[r.raceId]||[]).push(r));
+const stopsByRace={}; STOPS.forEach(s=>(stopsByRace[s.raceId]=stopsByRace[s.raceId]||[]).push(s));
+const S={season:"all", constructor:"all", driver:"all", circuit:"all", race:D.hook_race, misleading:true};
+
+// ---------- small statistics helpers
+const mean=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:NaN;
+const sd=a=>{if(a.length<2)return NaN; const m=mean(a); return Math.sqrt(a.reduce((s,x)=>s+(x-m)**2,0)/(a.length-1));};
+const se=a=>sd(a)/Math.sqrt(a.length);
+function pearson(x,y){const n=x.length; if(n<3)return NaN; const mx=mean(x), my=mean(y); let a=0,b=0,c=0;
+  for(let i=0;i<n;i++){const dx=x[i]-mx, dy=y[i]-my; a+=dx*dy; b+=dx*dx; c+=dy*dy;} return a/Math.sqrt(b*c);}
+function wilson(k,n){if(!n)return [NaN,NaN,NaN]; const z=1.96, p=k/n, d=1+z*z/n, c=(p+z*z/(2*n))/d, h=z*Math.sqrt(p*(1-p)/n+z*z/(4*n*n))/d;
+  return [100*p, 100*(c-h), 100*(c+h)];}
+const fmt=(v,d=1,s="")=>Number.isFinite(v)?v.toFixed(d)+s:"–";
+const sgn=(v,d=1)=>Number.isFinite(v)?(v>0?"+":"")+v.toFixed(d):"–";
+function rnd(seed){let s=seed%2147483647; if(s<=0)s+=2147483646; return ()=> (s=s*16807%2147483647)/2147483647;}
+
+const YEARS=[...new Set(RACES.map(r=>r.year))].sort();
+// End-of-line labels that would overlap are pushed apart (min gap in data units), keeping their order.
+function declutter(ann, gap){
+  const a=ann.filter(x=>x.xanchor==="left").sort((p,q)=>p.y-q.y);
+  for(let i=1;i<a.length;i++) if(a[i].y-a[i-1].y<gap) a[i].y=a[i-1].y+gap;
+}
+// ---------- filters
+const isAll=v=>v==="all";
+function match(r){return (isAll(S.season)||r.year==+S.season)&&(isAll(S.circuit)||r.circuitId==+S.circuit)
+  &&(isAll(S.constructor)||r.constructorId==+S.constructor)&&(isAll(S.driver)||r.driverId==+S.driver);}
+function filtersActive(){return !(isAll(S.season)&&isAll(S.circuit)&&isAll(S.constructor)&&isAll(S.driver));}
+function opt(el,items,allLabel){el.innerHTML=`<option value="all">${allLabel}</option>`+items.map(([v,l])=>`<option value="${v}">${l}</option>`).join("");}
+const circuits=[...new Map(RACES.map(r=>[r.circuitId,r.circuit_short])).entries()].sort((a,b)=>a[1].localeCompare(b[1]));
+opt(document.getElementById("f-season"),[...new Set(RACES.map(r=>r.year))].sort().map(y=>[y,y]),"All seasons");
+opt(document.getElementById("f-constructor"),CON.map(c=>[c.constructorId,c.constructor]),"All constructors");
+opt(document.getElementById("f-driver"),DRV.map(d=>[d.driverId,d.driver]),"All drivers");
+opt(document.getElementById("f-circuit"),circuits,"All circuits");
+
+function layout(title, o={}){
+  return Object.assign({font:FONT, paper_bgcolor:"#fff", plot_bgcolor:"#fff", showlegend:false,
+    title:{text:title, x:0.01, xanchor:"left", y:0.97, yanchor:"top", font:{size:15, color:C.ink}},
+    margin:{l:58,r:24,t:58,b:52}, hoverlabel:{bgcolor:"#fff", font:{size:12, color:C.ink}}}, o);}
+const ax=(o={})=>Object.assign({gridcolor:C.grid, zeroline:false, linecolor:C.light, ticks:"", automargin:true}, o);
+function empty(id,msg){Plotly.react(id,[],layout(msg,{xaxis:{visible:false},yaxis:{visible:false}}),CFG);}
+
+// ---------- HOOK: bump chart
+function raceList(){
+  return RACES.filter(r=>(isAll(S.season)||r.year==+S.season)&&(isAll(S.circuit)||r.circuitId==+S.circuit))
+    .filter(r=>(isAll(S.driver)&&isAll(S.constructor))||(resByRace[r.raceId]||[]).some(x=>
+      (isAll(S.driver)||x.driverId==+S.driver)&&(isAll(S.constructor)||x.constructorId==+S.constructor)));
+}
+function drawHook(){
+  const list=raceList(), sel=document.getElementById("f-race");
+  sel.innerHTML=list.map(r=>`<option value="${r.raceId}">${r.race_label}</option>`).join("");
+  if(!list.some(r=>r.raceId===S.race)) S.race=list.length?(list.some(r=>r.raceId===D.hook_race)?D.hook_race:list[list.length-1].raceId):null;
+  if(!S.race){document.getElementById("race-note").textContent=""; return empty("c-hook","No race matches these filters");}
+  sel.value=S.race;
+  const entries=resByRace[S.race], laps=D.laps[String(S.race)]||{}, race=raceById[S.race];
+  const hi={};
+  if(!isAll(S.driver)) hi[+S.driver]=C.red;
+  else if(!isAll(S.constructor)) entries.filter(e=>e.constructorId==+S.constructor).sort((a,b)=>a.positionOrder-b.positionOrder).forEach((e,i)=>hi[e.driverId]=i?C.red:C.ink);
+  else {const w=entries.find(e=>e.position===1); let best=null;
+    entries.forEach(e=>{if(e.grid!=null&&e.position!=null&&(best===null||e.grid-e.position>best.grid-best.position))best=e;});
+    if(best&&best!==w) hi[best.driverId]=C.red; if(w) hi[w.driverId]=C.ink;}
+  let changes=0, last=0; const traces=[], ann=[];
+  const ordered=entries.slice().sort((a,b)=>(a.driverId in hi)-(b.driverId in hi));
+  ordered.forEach(e=>{
+    const p=laps[String(e.driverId)]||[]; last=Math.max(last,p.length);
+    for(let i=1;i<p.length;i++) if(p[i]!=null&&p[i-1]!=null) changes+=Math.abs(p[i]-p[i-1]);
+    const col=hi[e.driverId]||C.light, code=drvById[e.driverId].code||drvById[e.driverId].driver;
+    traces.push({x:[...Array(p.length+1).keys()], y:[e.grid,...p], mode:"lines", line:{color:col,width:hi[e.driverId]?3:1.3},
+      hovertemplate:`<b>${drvById[e.driverId].driver}</b> (${conById[e.constructorId].constructor})<br>Lap %{x}: P%{y}<extra></extra>`});
+  });
+  const st=(stopsByRace[S.race]||[]).map(s=>({s, y:(laps[String(s.driverId)]||[])[s.lap-1]})).filter(o=>o.y!=null);
+  traces.push({x:st.map(o=>o.s.lap), y:st.map(o=>o.y), mode:"markers", hovertemplate:"Pit stop on lap %{x}<extra></extra>",
+    marker:{size:st.map(o=>hi[o.s.driverId]?10:6), color:st.map(o=>hi[o.s.driverId]||C.dot), line:{color:"#fff",width:1.5}}});
+  entries.forEach(e=>{const h=e.driverId in hi, d=drvById[e.driverId];
+    const ns=(stopsByRace[S.race]||[]).filter(s=>s.driverId===e.driverId).length;
+    ann.push({x:last+0.6, y:e.positionOrder, xanchor:"left", showarrow:false, text:h?`<b>${d.code}</b> P${e.grid??"pit"}→${e.position?"P"+e.position:"DNF"}, ${ns} stop${ns===1?"":"s"}`:(d.code||""),
+      font:{size:h?12:10, color:h?C.ink:C.muted}});});
+  const n=entries.length;
+  Plotly.react("c-hook",traces,layout(`${race.race_label}: ${changes.toLocaleString()} position changes`,{
+    xaxis:ax({title:"Lap", range:[-0.8,last+1], tickvals:[0,...[10,20,30,40,50,60,70].filter(v=>v<=last)], ticktext:["Grid",...[10,20,30,40,50,60,70].filter(v=>v<=last).map(String)], showgrid:false}),
+    yaxis:ax({title:"Position", autorange:false, range:[n+0.8,0.3], tickvals:[1,5,10,15,20].filter(v=>v<=n)}), annotations:ann, margin:{l:58,r:175,t:58,b:52}}),CFG);
+  document.getElementById("race-note").textContent=`${list.length} race${list.length===1?"":"s"} match the filters.`;
+}
+
+// ---------- ACT 1
+function drawCirc(){
+  const d=CR.slice().sort((a,b)=>a.r-b.r), sel=isAll(S.circuit)?null:+S.circuit;
+  const med=d.map(x=>x.r).sort((a,b)=>a-b)[Math.floor(d.length/2)];
+  const tr={x:d.map(x=>x.r), y:d.map(x=>x.circuit_short), mode:"markers", type:"scatter",
+    error_x:{type:"data", symmetric:false, array:d.map(x=>x.hi-x.r), arrayminus:d.map(x=>x.r-x.lo), color:C.grid, thickness:6, width:0},
+    marker:{size:11, color:d.map(x=>x.circuitId===sel?C.red:C.ink), line:{color:"#fff",width:2}},
+    customdata:d.map(x=>[x.n,x.races,x.lo,x.hi]),
+    hovertemplate:"<b>%{y}</b><br>r = %{x:.2f} (95%: %{customdata[2]:.2f}–%{customdata[3]:.2f})<br>%{customdata[0]} finishes, %{customdata[1]} races<extra></extra>"};
+  const missing=sel&&!d.some(x=>x.circuitId===sel);
+  Plotly.react("c-circ",[tr],layout("Grid–finish link by circuit",{xaxis:ax({title:"Correlation r (0 = no link, 1 = perfect)", range:[0.25,1]}),
+    yaxis:ax({showgrid:false, tickfont:{size:11}}), margin:{l:110,r:20,t:58,b:52},
+    shapes:[{type:"line", x0:med, x1:med, y0:-0.5, y1:d.length-0.5, line:{color:C.ink2,width:1}}],
+    annotations:[{x:med,y:d.length-0.3,text:`median ${med.toFixed(2)}`,showarrow:false,yanchor:"bottom",font:{size:11,color:C.ink2}}]
+      .concat(missing?[{xref:"paper",yref:"paper",x:0.5,y:0.02,showarrow:false,text:"Selected circuit has fewer than 40 classified finishes",font:{size:11,color:C.red}}]:[])}),CFG);
+}
+function drawGrid(){
+  const pts=RES.filter(r=>match(r)&&r.grid!=null&&r.position!=null);
+  if(pts.length<3) return empty("c-grid","Too few finishes for these filters");
+  const r=pearson(pts.map(p=>p.grid),pts.map(p=>p.position)), rn=rnd(17);
+  const mx=Math.max(...pts.map(p=>Math.max(p.grid,p.position)));
+  const byG={}; pts.forEach(p=>(byG[p.grid]=byG[p.grid]||[]).push(p.position));
+  const g=Object.keys(byG).map(Number).sort((a,b)=>a-b);
+  const dots={x:pts.map(p=>p.grid+(rn()-0.5)*0.5), y:pts.map(p=>p.position+(rn()-0.5)*0.5), mode:"markers", type:"scatter",
+    marker:{size:pts.length>800?4:6, color:C.dot, opacity:pts.length>800?0.3:0.7},
+    text:pts.map(p=>`${drvById[p.driverId].driver}, ${raceById[p.raceId].race_label}`),
+    hovertemplate:"%{text}<br>Grid %{customdata[0]} → P%{customdata[1]}<extra></extra>", customdata:pts.map(p=>[p.grid,p.position])};
+  const diag={x:[1,mx], y:[1,mx], mode:"lines", line:{color:C.red,width:2}, hoverinfo:"skip"};
+  const avg={x:g, y:g.map(k=>mean(byG[k])), mode:"lines+markers", line:{color:C.ink,width:2.5}, marker:{size:6,color:C.ink},
+    hovertemplate:"Start P%{x}: average finish %{y:.1f}<extra></extra>"};
+  Plotly.react("c-grid",[dots,diag,avg],layout((Number.isFinite(r)?`r = ${r.toFixed(2)} across ${pts.length.toLocaleString()} finishes`:`${pts.length} finishes`)+(pts.length<40?" · small sample":""),{
+    xaxis:ax({title:"Starting grid position", range:[0.3,mx+0.7], dtick:5}), yaxis:ax({title:"Finishing position", range:[mx+0.7,0.3], dtick:5}),
+    annotations:[{x:mx,y:mx,text:"finish = start",showarrow:false,xanchor:"right",yanchor:"top",yshift:-6,font:{size:11,color:C.ink}},
+                 {x:g[g.length-1],y:mean(byG[g[g.length-1]]),text:"average finish",showarrow:false,xanchor:"right",yshift:14,font:{size:11,color:C.ink}}]}),CFG);
+}
+
+// ---------- ACT 2
+function undStats(rows){const out={}; ["Early","Middle","Late"].forEach(t=>{const g=rows.filter(r=>r.timing===t);
+  out[t]={n:g.length, c2:mean(g.map(r=>r.chg2)), c10:mean(g.map(r=>r.chg10)), s2:se(g.map(r=>r.chg2)), s10:se(g.map(r=>r.chg10))};}); return out;}
+const UND_ALL=undStats(UND);
+function drawUnd(){
+  const u=UND.filter(match), s=undStats(u), tr=[], ann=[];
+  const style={Early:[C.red,3.2],Middle:[C.dot,2.2],Late:[C.ink2,2.4]}, X=["Lap before the stop","2 laps after","10 laps after"];
+  if(filtersActive()) ["Early","Middle","Late"].forEach(t=>tr.push({x:X,y:[0,UND_ALL[t].c2,UND_ALL[t].c10],mode:"lines",line:{color:C.grid,width:5},hoverinfo:"skip"}));
+  ["Early","Middle","Late"].forEach((t,i)=>{const v=s[t]; if(!v.n) return;
+    tr.push({x:X, y:[0,v.c2,v.c10], mode:"lines+markers", line:{color:style[t][0],width:style[t][1]},
+      marker:{size:9,color:style[t][0],line:{color:"#fff",width:1.5}},
+      error_y:{type:"data", array:[0,1.96*(v.s2||0),1.96*(v.s10||0)], color:style[t][0], thickness:1.5, width:0},
+      hovertemplate:`<b>${t} stoppers</b> (n = ${v.n})<br>%{x}: %{y:+.2f} places<extra></extra>`});
+    ann.push({x:X[2], y:v.c10, xanchor:"left", xshift:12, showarrow:false,
+      text:`${t==="Early"?"<b>":""}${t}: ${sgn(v.c10)} (n = ${v.n})${t==="Early"?"</b>":""}`, font:{size:12,color:C.ink}});});
+  if(!u.length) return empty("c-und","No first stops match these filters");
+  const ys=tr.flatMap(t=>t.y).filter(Number.isFinite); declutter(ann,(Math.max(...ys,0)-Math.min(...ys,0))*0.07);
+  const few=["Early","Middle","Late"].some(t=>s[t].n<30);
+  Plotly.react("c-und",tr,layout(`Early stoppers: ${sgn(s.Early.c2)} after 2 laps, ${sgn(s.Early.c10)} after 10 · ${u.length.toLocaleString()} stops`+(few?" · small sample":""),{
+    xaxis:ax({showgrid:false}), yaxis:ax({title:"Places gained (+) or lost (−)", zeroline:true, zerolinecolor:C.ink2}), annotations:ann, margin:{l:62,r:190,t:58,b:44}}),CFG);
+}
+
+// ---------- ACT 3
+function pairMatch(p){return (isAll(S.season)||p.year==+S.season)&&(isAll(S.circuit)||p.circuitId==+S.circuit)
+  &&(isAll(S.constructor)||p.constructorId==+S.constructor)&&(isAll(S.driver)||p.slow_id==+S.driver||p.fast_id==+S.driver);}
+function bar(id,title,labels,groups,colors){
+  const w=groups.map(g=>wilson(g.filter(p=>p.beat).length,g.length));
+  if(!groups.some(g=>g.length)) return empty(id,"No teammate pairs match these filters");
+  if(groups.some(g=>g.length<20)) title+=" · small sample";
+  const xs=labels.map((l,i)=>`${l}<br><span style="font-size:11px">n = ${groups[i].length}</span>`);
+  const ann=w.map((v,i)=>({x:xs[i], y:Number.isFinite(v[2])?v[2]:0, text:`<b>${fmt(v[0],0,"%")}</b>`, showarrow:false, yanchor:"bottom", yshift:4, font:{size:13,color:C.ink}}));
+  Plotly.react(id,[{type:"bar", x:xs, y:w.map(v=>v[0]),
+    marker:{color:colors}, width:0.5,
+    error_y:{type:"data", symmetric:false, array:w.map(v=>v[2]-v[0]), arrayminus:w.map(v=>v[0]-v[1]), color:C.ink2, thickness:1.2, width:0},
+    hovertemplate:"%{x}<br>%{y:.1f}%<extra></extra>"}],
+    layout(title,{xaxis:ax({showgrid:false}), yaxis:ax({title:"Slower qualifier finishes ahead (%)", range:[0,100]}), margin:{l:62,r:20,t:58,b:64}, annotations:ann}),CFG);
+}
+function drawDuel(){
+  const p=PAIRS.filter(pairMatch), ext=p.filter(x=>x.stop_diff>0), no=p.filter(x=>!(x.stop_diff>0));
+  bar("c-duel","With an extra stop, the slower teammate rarely wins",["No extra stop","Slower qualifier made<br>an extra stop"],[no,ext],[C.ink,C.red]);
+  bar("c-who","Whoever makes the extra stop usually loses",["Teammate made<br>the extra stop","Same number<br>of stops","Slower qualifier made<br>the extra stop"],
+    [p.filter(x=>x.stop_diff<0),p.filter(x=>x.stop_diff===0),ext],[C.ink2,C.dot,C.red]);
+}
+
+// ---------- ACT 4
+const TOP4={131:"Mercedes",9:"Red Bull",1:"McLaren",6:"Ferrari"};
+function drawShare(){
+  const by={}; CF.forEach(c=>(by[c.constructorId]=by[c.constructorId]||[]).push(c));
+  const sel=isAll(S.constructor)?null:+S.constructor, tr=[], ann=[];
+  const ids=Object.keys(by).map(Number).sort((a,b)=>((a in TOP4)||a===sel)-((b in TOP4)||b===sel)||(a===sel)-(b===sel));
+  ids.forEach(id=>{const g=by[id].sort((a,b)=>a.year-b.year), top=id in TOP4, isSel=id===sel;
+    const col=isSel?C.red:top?C.ink2:C.light;
+    tr.push({x:g.map(c=>c.year), y:g.map(c=>100*c.points_share), mode:top||isSel?"lines+markers":"lines",
+      line:{color:col,width:isSel?3.5:top?2.2:1.2}, marker:{size:isSel?8:6,color:col},
+      hovertemplate:`<b>${g[g.length-1].constructor}</b> %{x}<br>%{y:.1f}% of all points<br>%{customdata:.0f} points<extra></extra>`, customdata:g.map(c=>c.points)});
+    if(top||isSel){const l=g[g.length-1]; ann.push({x:l.year,y:100*l.points_share,text:`<b>${l.constructor}</b>`,xanchor:"left",xshift:8,showarrow:false,font:{size:12,color:C.ink}});}
+
+    const champ=g.filter(c=>c.position===1);
+    if(champ.length&&(top||isSel)) tr.push({x:champ.map(c=>c.year), y:champ.map(c=>100*c.points_share), mode:"markers", hoverinfo:"skip",
+      marker:{size:12,color:C.red,line:{color:"#fff",width:2}}});});
+  declutter(ann, 2.2);
+  const shapes=isAll(S.season)?[]:[{type:"rect",xref:"x",yref:"paper",x0:+S.season-0.5,x1:+S.season+0.5,y0:0,y1:1,fillcolor:C.grid,opacity:0.6,line:{width:0},layer:"below"}];
+  Plotly.react("c-share",tr,layout("Share of all constructor points by season · red dot = constructors' champion",{
+    xaxis:ax({tickvals:YEARS,showgrid:false,range:[2014.6,2025.6]}), yaxis:ax({title:"Share of all constructor points (%)",rangemode:"tozero",ticksuffix:"%"}),
+    annotations:ann, shapes, margin:{l:62,r:110,t:58,b:44}}),CFG);
+}
+function drawDNF(){
+  const yrs=[...new Set(RES.map(r=>r.year))].sort(), field=yrs.map(y=>100*mean(RES.filter(r=>r.year===y).map(r=>r.is_dnf)));
+  const tr=[{x:yrs,y:field,mode:"lines+markers",line:{color:C.ink,width:2.5},marker:{size:7,color:C.ink},name:"All cars",hovertemplate:"All cars %{x}: %{y:.1f}%<extra></extra>"}];
+  let label="";
+  if(!isAll(S.constructor)||!isAll(S.driver)||!isAll(S.circuit)){
+    const m2=r=>(isAll(S.circuit)||r.circuitId==+S.circuit)&&(isAll(S.constructor)||r.constructorId==+S.constructor)&&(isAll(S.driver)||r.driverId==+S.driver);
+    const pts=yrs.map(y=>{const g=RES.filter(r=>r.year===y&&m2(r)); return [g.length?100*mean(g.map(r=>r.is_dnf)):null,g.length];});
+    label=[!isAll(S.driver)?drvById[+S.driver].driver:null,!isAll(S.constructor)?conById[+S.constructor].constructor:null,!isAll(S.circuit)?circuits.find(c=>c[0]==+S.circuit)[1]:null].filter(Boolean).join(" · ");
+    tr.push({x:yrs,y:pts.map(p=>p[0]),customdata:pts.map(p=>p[1]),mode:"lines+markers",connectgaps:false,line:{color:C.red,width:2.5},marker:{size:8,color:C.red},
+      hovertemplate:`${label} %{x}: %{y:.1f}% of %{customdata} starts<extra></extra>`});
+  }
+  Plotly.react("c-dnf",tr,layout(label?`Genuine DNF rate: all cars (black) vs ${label} (red)`:"Genuine DNF rate fell by about half",{
+    xaxis:ax({dtick:1,showgrid:false}), yaxis:ax({title:"Genuine DNF rate (%)",rangemode:"tozero",ticksuffix:"%"})}),CFG);
+}
+function drawPts(){
+  const tot={}; DF.forEach(d=>tot[d.driverId]=(tot[d.driverId]||0)+d.points);
+  const ids=Object.keys(tot).map(Number).sort((a,b)=>tot[b]-tot[a]).slice(0,8), sel=isAll(S.driver)?null:+S.driver;
+  if(sel&&!ids.includes(sel)) ids.push(sel);
+  const hiCol=id=>sel?(id===sel?C.red:null):(drvById[id].driver==="Max Verstappen"?C.red:drvById[id].driver==="Lewis Hamilton"?C.ink:null);
+  const tr=[], ann=[];
+  ids.sort((a,b)=>(hiCol(a)?1:0)-(hiCol(b)?1:0)).forEach(id=>{const g=DF.filter(d=>d.driverId===id).sort((a,b)=>a.year-b.year), col=hiCol(id)||C.light;
+    tr.push({x:g.map(d=>d.year),y:g.map(d=>d.points),mode:"lines+markers",line:{color:col,width:hiCol(id)?3:1.6},marker:{size:6,color:col},
+      hovertemplate:`<b>${drvById[id].driver}</b> %{x}<br>%{y:.0f} points<extra></extra>`});
+    const t=g.filter(d=>d.position===1); if(t.length) tr.push({x:t.map(d=>d.year),y:t.map(d=>d.points),mode:"markers",hoverinfo:"skip",
+      marker:{symbol:"star",size:15,color:hiCol(id)||C.ink2,line:{color:"#fff",width:1.5}}});
+    if(hiCol(id)){const l=g[g.length-1]; ann.push({x:l.year,y:l.points,text:`<b>${drvById[id].driver.split(" ").slice(-1)[0]}</b>`,xanchor:"left",xshift:8,showarrow:false,font:{size:12,color:C.ink}});}});
+  declutter(ann, 25);
+  Plotly.react("c-pts",tr,layout("Season points · stars = world title",{xaxis:ax({tickvals:YEARS,showgrid:false,range:[2014.6,2025.6]}),
+    yaxis:ax({title:"Championship points",rangemode:"tozero"}),annotations:ann,margin:{l:62,r:80,t:58,b:44}}),CFG);
+}
+
+// ---------- ACT 5
+function drawEthics(){
+  const yr=isAll(S.season)?2024:+S.season, top=CF.filter(c=>c.year===yr).sort((a,b)=>a.position-b.position).slice(0,2);
+  const [a,b]=top, gap=a.points-b.points, base=Math.floor((b.points-Math.max(gap*0.5,2))/5)*5;
+  const vr=(a.points-base)/(b.points-base), lie=((a.points-base)-(b.points-base))/(b.points-base)/(gap/b.points);
+  const mis=S.misleading, hi=mis?a.points+(a.points-base)*0.25:a.points*1.15;
+  const ann=[{x:0.5,y:hi,xref:"x",text:`${gap.toFixed(gap%1?1:0)}-point gap`,showarrow:false,yanchor:"top",font:{size:12,color:C.ink}}];
+  if(mis) ann.push({xref:"paper",yref:"paper",x:0.5,y:0.5,text:"<b>MISLEADING</b><br>for ethics demonstration",showarrow:false,textangle:-15,
+    font:{size:24,color:C.red},bgcolor:"rgba(255,255,255,0.85)",bordercolor:C.red,borderwidth:2.5,borderpad:6,opacity:0.9});
+  Plotly.react("c-eth",[{type:"bar",x:[a.constructor,b.constructor],y:[a.points,b.points],width:0.5,marker:{color:[C.red,C.dot]},
+    text:[a.points,b.points].map(v=>v.toFixed(v%1?1:0)),textposition:"outside",textfont:{size:14,color:C.ink},cliponaxis:false,
+    hovertemplate:"%{x}: %{y} points<extra></extra>"}],
+    layout(mis?`${a.constructor} crushed ${b.constructor} in ${yr}?`:`${a.constructor} beat ${b.constructor} in ${yr} by ${(100*gap/b.points).toFixed(1)}%`,{
+      xaxis:ax({showgrid:false}), yaxis:ax({title:"Constructor championship points", range:mis?[base,hi]:[0,hi]}), annotations:ann}),CFG);
+  document.getElementById("eth-text").innerHTML=mis?
+    `<p><b>What was manipulated:</b> only the y-axis. It starts at <b>${base}</b> points, not 0. The numbers are real.</p>
+     <p><b>Why it misleads:</b> a bar shows value by its length. With the axis cut, ${a.constructor}'s bar looks <b>${vr.toFixed(1)}×</b> taller,
+     but the real difference is <b>${(100*gap/b.points).toFixed(1)}%</b>.</p>
+     <p><b>Lie factor</b> (Tufte) = size of the effect in the graphic ÷ size of the effect in the data ≈ <b>${lie.toFixed(0)}</b>. An honest chart is close to 1.</p>`:
+    `<p><b>How it was fixed:</b> the y-axis starts at zero, so bar length is proportional to points (<i>truthful scaling</i>, <i>proportional ink</i>).</p>
+     <p>The values are printed on the bars and the title states the real size of the gap: <b>${gap.toFixed(gap%1?1:0)} points</b>, ${(100*gap/b.points).toFixed(1)}%.</p>
+     <p>No number in the misleading version was false, which is what makes it dangerous: it would pass a fact-check of its labels.</p>`;
+}
+
+// ---------- KPIs and wiring
+function kpis(){
+  const res=RES.filter(match), rid=new Set(res.map(r=>r.raceId)), gp=res.filter(r=>r.grid!=null&&r.position!=null);
+  const r=pearson(gp.map(p=>p.grid),gp.map(p=>p.position)), u=UND.filter(match).filter(x=>x.timing==="Early");
+  const p=PAIRS.filter(pairMatch), e=p.filter(x=>x.stop_diff>0), n=p.filter(x=>!(x.stop_diff>0));
+  const set=(id,v)=>document.getElementById(id).textContent=v;
+  set("k-races",rid.size); set("k-races-d",`${res.length.toLocaleString()} race entries`);
+  set("k-r",fmt(r,2)); set("k-r-d",`${gp.length.toLocaleString()} classified finishes`);
+  set("k-und",u.length?sgn(mean(u.map(x=>x.chg10)))+" places":"–"); set("k-und-d",u.length?`after ${sgn(mean(u.map(x=>x.chg2)))} at 2 laps · n = ${u.length}`:"no early stops");
+  set("k-duel",e.length&&n.length?`${fmt(100*mean(e.map(x=>x.beat)),0,"%")} vs ${fmt(100*mean(n.map(x=>x.beat)),0,"%")}`:"–");
+  set("k-duel-d",`with vs without extra stop · ${p.length} pairs`);
+  set("k-dnf",fmt(100*mean(res.map(x=>x.is_dnf)),1,"%")); set("k-dnf-d",`of ${res.length.toLocaleString()} starts`);
+  const parts=[!isAll(S.season)?S.season:null,!isAll(S.constructor)?conById[+S.constructor].constructor:null,
+    !isAll(S.driver)?drvById[+S.driver].driver:null,!isAll(S.circuit)?circuits.find(c=>c[0]==+S.circuit)[1]:null].filter(Boolean);
+  set("scope",parts.length?`Showing: ${parts.join(" · ")} (${rid.size} races).`:`Showing all ${RACES.length} races.`);
+}
+function writeHash(){const h=["season","constructor","driver","circuit"].filter(k=>!isAll(S[k])).map(k=>`${k}=${S[k]}`);
+  if(S.race!=null&&S.race!==D.hook_race) h.push(`race=${S.race}`); if(!S.misleading) h.push("view=honest");
+  history.replaceState(null,"",h.length?"#"+h.join("&"):location.pathname);}
+function readHash(){["season","constructor","driver","circuit"].forEach(k=>{S[k]="all"; document.getElementById("f-"+k).value="all";});
+  S.race=D.hook_race; S.misleading=true;
+  new URLSearchParams(location.hash.slice(1)).forEach((v,k)=>{
+  if(["season","constructor","driver","circuit"].includes(k)){S[k]=v; const el=document.getElementById("f-"+k); el.value=v; if(el.value!==v){S[k]="all"; el.value="all";}}
+  if(k==="race"&&Number.isFinite(+v)) S.race=+v; if(k==="view") S.misleading=v!=="honest";});
+  document.getElementById("b-mis").classList.toggle("on",S.misleading); document.getElementById("b-hon").classList.toggle("on",!S.misleading);}
+function drawAll(){writeHash(); kpis(); drawHook(); drawCirc(); drawGrid(); drawUnd(); drawDuel(); drawShare(); drawDNF(); drawPts(); drawEthics();}
+["season","constructor","driver","circuit"].forEach(k=>document.getElementById("f-"+k).addEventListener("change",e=>{S[k]=e.target.value; drawAll();}));
+document.getElementById("f-race").addEventListener("change",e=>{S.race=+e.target.value; writeHash(); drawHook();});
+document.getElementById("reset").addEventListener("click",()=>{["season","constructor","driver","circuit"].forEach(k=>{S[k]="all"; document.getElementById("f-"+k).value="all";}); S.race=D.hook_race; drawAll();});
+document.getElementById("b-mis").addEventListener("click",()=>{S.misleading=true; document.getElementById("b-mis").classList.add("on"); document.getElementById("b-hon").classList.remove("on"); writeHash(); drawEthics();});
+document.getElementById("b-hon").addEventListener("click",()=>{S.misleading=false; document.getElementById("b-hon").classList.add("on"); document.getElementById("b-mis").classList.remove("on"); writeHash(); drawEthics();});
+document.querySelectorAll("[data-f]").forEach(el=>el.textContent=(D.facts[el.dataset.f]??"?"));
+readHash();
+drawAll();
+window.addEventListener("hashchange",()=>{readHash(); drawAll();});
+</script>
+</body>
+</html>

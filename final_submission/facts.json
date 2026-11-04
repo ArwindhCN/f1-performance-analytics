@@ -1,0 +1,1132 @@
+{
+ "P.n_results": {
+  "value": 4219,
+  "text": "4,219",
+  "cell": "P.12"
+ },
+ "P.n_races": {
+  "value": 209,
+  "text": "209",
+  "cell": "P.12"
+ },
+ "P.n_drivers": {
+  "value": 53,
+  "text": "53",
+  "cell": "P.12"
+ },
+ "P.n_constructors": {
+  "value": 18,
+  "text": "18",
+  "cell": "P.12"
+ },
+ "P.n_unclassified": {
+  "value": 641,
+  "text": "641",
+  "cell": "P.12"
+ },
+ "P.n_dnf": {
+  "value": 715,
+  "text": "715",
+  "cell": "P.12"
+ },
+ "P.n_dnf_classified": {
+  "value": 74,
+  "text": "74",
+  "cell": "P.12"
+ },
+ "P.n_pitlane": {
+  "value": 79,
+  "text": "79",
+  "cell": "P.12"
+ },
+ "P.n_stops": {
+  "value": 7544,
+  "text": "7,544",
+  "cell": "P.12"
+ },
+ "P.n_long_stops": {
+  "value": 484,
+  "text": "484",
+  "cell": "P.12"
+ },
+ "P.pit_median_normal": {
+  "value": 23.7275,
+  "text": "23.7",
+  "cell": "P.12"
+ },
+ "P.pit_median_all": {
+  "value": 23.977,
+  "text": "24.0",
+  "cell": "P.12"
+ },
+ "P.n_laps": {
+  "value": 227123,
+  "text": "227,123",
+  "cell": "P.12"
+ },
+ "P.n_quali": {
+  "value": 4205,
+  "text": "4,205",
+  "cell": "P.12"
+ },
+ "P.n_sprint": {
+  "value": 360,
+  "text": "360",
+  "cell": "P.12"
+ },
+ "P.n_dfinal": {
+  "value": 223,
+  "text": "223",
+  "cell": "P.12"
+ },
+ "P.n_cfinal": {
+  "value": 101,
+  "text": "101",
+  "cell": "P.12"
+ },
+ "P.n_circuits": {
+  "value": 32,
+  "text": "32",
+  "cell": "P.12"
+ },
+ "P.raw_results": {
+  "value": 26759,
+  "text": "26,759",
+  "cell": "P.12"
+ },
+ "P.raw_races": {
+  "value": 1125,
+  "text": "1,125",
+  "cell": "P.12"
+ },
+ "P.raw_laps": {
+  "value": 589081,
+  "text": "589,081",
+  "cell": "P.12"
+ },
+ "P.first_year": {
+  "value": 1950,
+  "text": "1950",
+  "cell": "P.12"
+ },
+ "P.raw_cols": {
+  "value": 18,
+  "text": "18",
+  "cell": "P.12"
+ },
+ "P.clean_cols": {
+  "value": 35,
+  "text": "35",
+  "cell": "P.12"
+ },
+ "P.no_pit_race": {
+  "value": "2021 Belgian GP",
+  "text": "2021 Belgian GP",
+  "cell": "P.12"
+ },
+ "H.race": {
+  "value": "2016 Chinese GP",
+  "text": "2016 Chinese GP",
+  "cell": "H.1"
+ },
+ "H.n_races": {
+  "value": 209,
+  "text": "209",
+  "cell": "H.1"
+ },
+ "H.changes": {
+  "value": 844,
+  "text": "844",
+  "cell": "H.1"
+ },
+ "H.per_lap": {
+  "value": 15.071428571428571,
+  "text": "15",
+  "cell": "H.1"
+ },
+ "H.median_changes": {
+  "value": 275.0,
+  "text": "275",
+  "cell": "H.1"
+ },
+ "H.cars": {
+  "value": 22,
+  "text": "22",
+  "cell": "H.1"
+ },
+ "H.dnfs": {
+  "value": 0,
+  "text": "0",
+  "cell": "H.1"
+ },
+ "H.second": {
+  "value": "2023 Qatar GP",
+  "text": "2023 Qatar GP",
+  "cell": "H.1"
+ },
+ "H.second_changes": {
+  "value": 741,
+  "text": "741",
+  "cell": "H.1"
+ },
+ "H.ham_grid": {
+  "value": 22,
+  "text": "22",
+  "cell": "H.2"
+ },
+ "H.ham_finish": {
+  "value": 7,
+  "text": "7",
+  "cell": "H.2"
+ },
+ "H.ham_stops": {
+  "value": 5,
+  "text": "5",
+  "cell": "H.2"
+ },
+ "H.ros_stops": {
+  "value": 2,
+  "text": "2",
+  "cell": "H.2"
+ },
+ "H.ham_first_stop": {
+  "value": 1,
+  "text": "1",
+  "cell": "H.2"
+ },
+ "H.slow_first": {
+  "value": 5,
+  "text": "5",
+  "cell": "H.2"
+ },
+ "H.slow_last": {
+  "value": 8,
+  "text": "8",
+  "cell": "H.2"
+ },
+ "H.sc_lap": {
+  "value": 4,
+  "text": "4",
+  "cell": "H.2"
+ },
+ "H.n_sc_stops": {
+  "value": 10,
+  "text": "10",
+  "cell": "H.2"
+ },
+ "H.laps": {
+  "value": 56,
+  "text": "56",
+  "cell": "H.2"
+ },
+ "A1.n": {
+  "value": 3518,
+  "text": "3,518",
+  "cell": "A1.1"
+ },
+ "A1.pooled_r": {
+  "value": 0.7455949610144486,
+  "text": "0.75",
+  "cell": "A1.1"
+ },
+ "A1.r2": {
+  "value": 55.59118458901371,
+  "text": "56%",
+  "cell": "A1.1"
+ },
+ "A1.pole_win": {
+  "value": 52.63157894736842,
+  "text": "53%",
+  "cell": "A1.1"
+ },
+ "A1.front_row_win": {
+  "value": 77.03349282296651,
+  "text": "77%",
+  "cell": "A1.1"
+ },
+ "A1.top3_win": {
+  "value": 87.5598086124402,
+  "text": "88%",
+  "cell": "A1.1"
+ },
+ "A1.p1_avg_finish": {
+  "value": 1.9581151832460733,
+  "text": "2.0",
+  "cell": "A1.1"
+ },
+ "A1.p10_avg_finish": {
+  "value": 9.654761904761905,
+  "text": "9.7",
+  "cell": "A1.1"
+ },
+ "A1.p20_avg_finish": {
+  "value": 14.15079365079365,
+  "text": "14.2",
+  "cell": "A1.1"
+ },
+ "A1.n_circuits": {
+  "value": 27,
+  "text": "27",
+  "cell": "A1.2"
+ },
+ "A1.median_r": {
+  "value": 0.7435058071081583,
+  "text": "0.74",
+  "cell": "A1.2"
+ },
+ "A1.top_circuit": {
+  "value": "Monaco",
+  "text": "Monaco",
+  "cell": "A1.2"
+ },
+ "A1.top_r": {
+  "value": 0.8779582017820196,
+  "text": "0.88",
+  "cell": "A1.2"
+ },
+ "A1.top_races": {
+  "value": 9,
+  "text": "9",
+  "cell": "A1.2"
+ },
+ "A1.second_circuit": {
+  "value": "Barcelona",
+  "text": "Barcelona",
+  "cell": "A1.2"
+ },
+ "A1.second_r": {
+  "value": 0.8263757894750982,
+  "text": "0.83",
+  "cell": "A1.2"
+ },
+ "A1.third_circuit": {
+  "value": "Mexico City",
+  "text": "Mexico City",
+  "cell": "A1.2"
+ },
+ "A1.third_r": {
+  "value": 0.8146797596942749,
+  "text": "0.81",
+  "cell": "A1.2"
+ },
+ "A1.bottom_circuit": {
+  "value": "Hockenheim",
+  "text": "Hockenheim",
+  "cell": "A1.2"
+ },
+ "A1.bottom_r": {
+  "value": 0.5242982850744515,
+  "text": "0.52",
+  "cell": "A1.2"
+ },
+ "A1.bottom_races": {
+  "value": 3,
+  "text": "3",
+  "cell": "A1.2"
+ },
+ "A1.bottom_n": {
+  "value": 50,
+  "text": "50",
+  "cell": "A1.2"
+ },
+ "A1.bottom_lo": {
+  "value": 0.2879723375893098,
+  "text": "0.29",
+  "cell": "A1.2"
+ },
+ "A1.bottom_hi": {
+  "value": 0.7004302226765691,
+  "text": "0.70",
+  "cell": "A1.2"
+ },
+ "A1.second_bottom": {
+  "value": "Sochi",
+  "text": "Sochi",
+  "cell": "A1.2"
+ },
+ "A1.second_bottom_r": {
+  "value": 0.6552514871695014,
+  "text": "0.66",
+  "cell": "A1.2"
+ },
+ "A1.third_bottom": {
+  "value": "São Paulo",
+  "text": "São Paulo",
+  "cell": "A1.2"
+ },
+ "A1.third_bottom_r": {
+  "value": 0.6650076607855266,
+  "text": "0.67",
+  "cell": "A1.2"
+ },
+ "A2.n": {
+  "value": 3490,
+  "text": "3,490",
+  "cell": "A2.1"
+ },
+ "A2.early_n": {
+  "value": 1032,
+  "text": "1,032",
+  "cell": "A2.1"
+ },
+ "A2.early_chg2": {
+  "value": -4.0271317829457365,
+  "text": "-4.0",
+  "cell": "A2.1"
+ },
+ "A2.early_chg10": {
+  "value": -1.6724806201550388,
+  "text": "-1.7",
+  "cell": "A2.1"
+ },
+ "A2.early_lost2": {
+  "value": 4.0271317829457365,
+  "text": "4.0",
+  "cell": "A2.1"
+ },
+ "A2.early_back": {
+  "value": 2.354651162790698,
+  "text": "2.4",
+  "cell": "A2.1"
+ },
+ "A2.middle_n": {
+  "value": 1291,
+  "text": "1,291",
+  "cell": "A2.1"
+ },
+ "A2.middle_chg2": {
+  "value": -2.9752130131680867,
+  "text": "-3.0",
+  "cell": "A2.1"
+ },
+ "A2.middle_chg10": {
+  "value": -1.6390395042602635,
+  "text": "-1.6",
+  "cell": "A2.1"
+ },
+ "A2.middle_lost2": {
+  "value": 2.9752130131680867,
+  "text": "3.0",
+  "cell": "A2.1"
+ },
+ "A2.middle_back": {
+  "value": 1.3361735089078233,
+  "text": "1.3",
+  "cell": "A2.1"
+ },
+ "A2.late_n": {
+  "value": 1167,
+  "text": "1,167",
+  "cell": "A2.1"
+ },
+ "A2.late_chg2": {
+  "value": -3.324764353041988,
+  "text": "-3.3",
+  "cell": "A2.1"
+ },
+ "A2.late_chg10": {
+  "value": -2.258783204798629,
+  "text": "-2.3",
+  "cell": "A2.1"
+ },
+ "A2.late_lost2": {
+  "value": 3.324764353041988,
+  "text": "3.3",
+  "cell": "A2.1"
+ },
+ "A2.late_back": {
+  "value": 1.0659811482433592,
+  "text": "1.1",
+  "cell": "A2.1"
+ },
+ "A2.early_lost2_round": {
+  "value": 4,
+  "text": "4",
+  "cell": "A2.1"
+ },
+ "A2.s_n": {
+  "value": 3221,
+  "text": "3,221",
+  "cell": "A2.3"
+ },
+ "A2.s_early_chg2": {
+  "value": -3.9898887765419615,
+  "text": "-4.0",
+  "cell": "A2.3"
+ },
+ "A2.s_early_chg10": {
+  "value": -1.6673407482305358,
+  "text": "-1.7",
+  "cell": "A2.3"
+ },
+ "A2.s_late_chg2": {
+  "value": -3.2755194218608854,
+  "text": "-3.3",
+  "cell": "A2.3"
+ },
+ "A2.s_late_chg10": {
+  "value": -2.2312556458897923,
+  "text": "-2.2",
+  "cell": "A2.3"
+ },
+ "A3.n_pairs": {
+  "value": 2085,
+  "text": "2,085",
+  "cell": "A3.1"
+ },
+ "A3.n_both_cls": {
+  "value": 1522,
+  "text": "1,522",
+  "cell": "A3.1"
+ },
+ "A3.zero_stop_n": {
+  "value": 2,
+  "text": "2",
+  "cell": "A3.2"
+ },
+ "A3.finish_1": {
+  "value": 8.519882179675994,
+  "text": "8.5",
+  "cell": "A3.2"
+ },
+ "A3.nstops_1": {
+  "value": 1358,
+  "text": "1,358",
+  "cell": "A3.2"
+ },
+ "A3.finish_2": {
+  "value": 9.310686482661005,
+  "text": "9.3",
+  "cell": "A3.2"
+ },
+ "A3.nstops_2": {
+  "value": 1413,
+  "text": "1,413",
+  "cell": "A3.2"
+ },
+ "A3.finish_3": {
+  "value": 10.162213740458014,
+  "text": "10.2",
+  "cell": "A3.2"
+ },
+ "A3.nstops_3": {
+  "value": 524,
+  "text": "524",
+  "cell": "A3.2"
+ },
+ "A3.finish_4": {
+  "value": 9.662835249042146,
+  "text": "9.7",
+  "cell": "A3.2"
+ },
+ "A3.nstops_4": {
+  "value": 261,
+  "text": "261",
+  "cell": "A3.2"
+ },
+ "A3.r_gap": {
+  "value": 0.020853454488735955,
+  "text": "+0.02",
+  "cell": "A3.3"
+ },
+ "A3.r_gap_p": {
+  "value": 0.34122949935788327,
+  "text": "0.34",
+  "cell": "A3.3"
+ },
+ "A3.share_extra": {
+  "value": 23.54916067146283,
+  "text": "24%",
+  "cell": "A3.3"
+ },
+ "A3.rate_extra": {
+  "value": 12.237762237762238,
+  "text": "12%",
+  "cell": "A3.4"
+ },
+ "A3.rate_extra_1": {
+  "value": 12.237762237762238,
+  "text": "12.2%",
+  "cell": "A3.4"
+ },
+ "A3.rate_no": {
+  "value": 34.22330097087379,
+  "text": "34%",
+  "cell": "A3.4"
+ },
+ "A3.rate_no_1": {
+  "value": 34.22330097087379,
+  "text": "34.2%",
+  "cell": "A3.4"
+ },
+ "A3.n_extra": {
+  "value": 286,
+  "text": "286",
+  "cell": "A3.4"
+ },
+ "A3.n_no": {
+  "value": 1236,
+  "text": "1,236",
+  "cell": "A3.4"
+ },
+ "A3.z": {
+  "value": -7.3052172710235315,
+  "text": "-7.3",
+  "cell": "A3.4"
+ },
+ "A3.med_gap_extra": {
+  "value": 3.0,
+  "text": "+3",
+  "cell": "A3.4"
+ },
+ "A3.med_gap_no": {
+  "value": 1.0,
+  "text": "+1",
+  "cell": "A3.4"
+ },
+ "A3.small_extra": {
+  "value": 12.790697674418604,
+  "text": "13%",
+  "cell": "A3.4"
+ },
+ "A3.small_no": {
+  "value": 41.31227217496962,
+  "text": "41%",
+  "cell": "A3.4"
+ },
+ "A3.small_n_extra": {
+  "value": 172,
+  "text": "172",
+  "cell": "A3.4"
+ },
+ "A3.small_p": {
+  "value": 1.5360106963654946e-12,
+  "text": "1.5e-12",
+  "cell": "A3.4"
+ },
+ "A3.medium_extra": {
+  "value": 11.764705882352942,
+  "text": "12%",
+  "cell": "A3.4"
+ },
+ "A3.medium_no": {
+  "value": 23.42007434944238,
+  "text": "23%",
+  "cell": "A3.4"
+ },
+ "A3.medium_n_extra": {
+  "value": 68,
+  "text": "68",
+  "cell": "A3.4"
+ },
+ "A3.medium_p": {
+  "value": 0.035228285487829296,
+  "text": "0.035",
+  "cell": "A3.4"
+ },
+ "A3.large_extra": {
+  "value": 10.869565217391305,
+  "text": "11%",
+  "cell": "A3.4"
+ },
+ "A3.large_no": {
+  "value": 13.88888888888889,
+  "text": "14%",
+  "cell": "A3.4"
+ },
+ "A3.large_n_extra": {
+  "value": 46,
+  "text": "46",
+  "cell": "A3.4"
+ },
+ "A3.large_p": {
+  "value": 0.5979204534545135,
+  "text": "0.6",
+  "cell": "A3.4"
+ },
+ "A3.beat_when_mate_extra": {
+  "value": 63.75,
+  "text": "64%",
+  "cell": "A3.5"
+ },
+ "A3.n_mate_extra": {
+  "value": 240,
+  "text": "240",
+  "cell": "A3.5"
+ },
+ "A3.beat_when_equal": {
+  "value": 27.10843373493976,
+  "text": "27%",
+  "cell": "A3.5"
+ },
+ "A3.n_equal": {
+  "value": 996,
+  "text": "996",
+  "cell": "A3.5"
+ },
+ "A3.early_stop_extra": {
+  "value": 27.27272727272727,
+  "text": "27%",
+  "cell": "A3.5"
+ },
+ "A3.early_stop_no": {
+  "value": 8.737864077669903,
+  "text": "9%",
+  "cell": "A3.5"
+ },
+ "A4.mer_2015": {
+  "value": 36.633663366336634,
+  "text": "36.6%",
+  "cell": "A4.1"
+ },
+ "A4.mer_2023": {
+  "value": 16.639544344995933,
+  "text": "16.6%",
+  "cell": "A4.1"
+ },
+ "A4.rbr_2015": {
+  "value": 9.744658676393955,
+  "text": "9.7%",
+  "cell": "A4.1"
+ },
+ "A4.rbr_2023": {
+  "value": 34.98779495524817,
+  "text": "35.0%",
+  "cell": "A4.1"
+ },
+ "A4.mcl_2015": {
+  "value": 1.4069828035435124,
+  "text": "1.4%",
+  "cell": "A4.1"
+ },
+ "A4.mcl_2024": {
+  "value": 25.047010154193305,
+  "text": "25.0%",
+  "cell": "A4.1"
+ },
+ "A4.fer_2024": {
+  "value": 24.52049642722828,
+  "text": "24.5%",
+  "cell": "A4.1"
+ },
+ "A4.rbr_2024": {
+  "value": 22.15118465588567,
+  "text": "22.2%",
+  "cell": "A4.1"
+ },
+ "A4.mer_2016": {
+  "value": 36.06789250353607,
+  "text": "36.1%",
+  "cell": "A4.1"
+ },
+ "A4.mer_titles": {
+  "value": 7,
+  "text": "7",
+  "cell": "A4.1"
+ },
+ "A4.rbr_titles": {
+  "value": 2,
+  "text": "2",
+  "cell": "A4.1"
+ },
+ "A4.mer_last_title": {
+  "value": 2021,
+  "text": "2021",
+  "cell": "A4.1"
+ },
+ "A4.fer_best": {
+  "value": 27.69156159068865,
+  "text": "27.7%",
+  "cell": "A4.1"
+ },
+ "A4.fer_best_year": {
+  "value": 2018,
+  "text": "2018",
+  "cell": "A4.1"
+ },
+ "A4.fer_worst": {
+  "value": 7.620709714950552,
+  "text": "7.6%",
+  "cell": "A4.1"
+ },
+ "A4.fer_worst_year": {
+  "value": 2020,
+  "text": "2020",
+  "cell": "A4.1"
+ },
+ "A4.swing_team": {
+  "value": "Ferrari",
+  "text": "Ferrari",
+  "cell": "A4.1"
+ },
+ "A4.swing_pp": {
+  "value": 18.22087444346529,
+  "text": "18",
+  "cell": "A4.1"
+ },
+ "A4.swing_dir": {
+  "value": "fell",
+  "text": "fell",
+  "cell": "A4.1"
+ },
+ "A4.swing_from": {
+  "value": 2017,
+  "text": "2017",
+  "cell": "A4.1"
+ },
+ "A4.swing_to": {
+  "value": 2020,
+  "text": "2020",
+  "cell": "A4.1"
+ },
+ "A4.dnf_2015": {
+  "value": 21.428571428571427,
+  "text": "21.4%",
+  "cell": "A4.2"
+ },
+ "A4.dnf_2024": {
+  "value": 11.273486430062631,
+  "text": "11.3%",
+  "cell": "A4.2"
+ },
+ "A4.dnf_2017": {
+  "value": 23.75,
+  "text": "23.8%",
+  "cell": "A4.2"
+ },
+ "A4.dnf_2022": {
+  "value": 16.818181818181817,
+  "text": "16.8%",
+  "cell": "A4.2"
+ },
+ "A4.dnf_2015_r": {
+  "value": 21.428571428571427,
+  "text": "21%",
+  "cell": "A4.2"
+ },
+ "A4.dnf_2024_r": {
+  "value": 11.273486430062631,
+  "text": "11%",
+  "cell": "A4.2"
+ },
+ "A4.dnf_best_team": {
+  "value": "Mercedes",
+  "text": "Mercedes",
+  "cell": "A4.2"
+ },
+ "A4.dnf_best": {
+  "value": 7.4162679425837315,
+  "text": "7.4%",
+  "cell": "A4.2"
+ },
+ "A4.dnf_worst_team": {
+  "value": "Toro Rosso",
+  "text": "Toro Rosso",
+  "cell": "A4.2"
+ },
+ "A4.dnf_worst": {
+  "value": 25.49019607843137,
+  "text": "25.5%",
+  "cell": "A4.2"
+ },
+ "A4.wins_champ_car": {
+  "value": 66.50717703349282,
+  "text": "67%",
+  "cell": "A4.3"
+ },
+ "A4.n_winners": {
+  "value": 15,
+  "text": "15",
+  "cell": "A4.3"
+ },
+ "A4.top2_wins": {
+  "value": 64.5933014354067,
+  "text": "65%",
+  "cell": "A4.3"
+ },
+ "A4.ham_wins": {
+  "value": 72,
+  "text": "72",
+  "cell": "A4.3"
+ },
+ "A4.ham_champ_wins": {
+  "value": 70,
+  "text": "70",
+  "cell": "A4.3"
+ },
+ "A4.ver_wins": {
+  "value": 63,
+  "text": "63",
+  "cell": "A4.3"
+ },
+ "A4.ver_champ_wins": {
+  "value": 34,
+  "text": "34",
+  "cell": "A4.3"
+ },
+ "A4.n_champions": {
+  "value": 3,
+  "text": "3",
+  "cell": "A4.4"
+ },
+ "A4.n_titles": {
+  "value": 10,
+  "text": "10",
+  "cell": "A4.4"
+ },
+ "A4.ham_titles": {
+  "value": 5,
+  "text": "5",
+  "cell": "A4.4"
+ },
+ "A4.ver_titles": {
+  "value": 4,
+  "text": "4",
+  "cell": "A4.4"
+ },
+ "A4.ver_2023_pts": {
+  "value": 575.0,
+  "text": "575",
+  "cell": "A4.4"
+ },
+ "A4.hm_n_circuits": {
+  "value": 17,
+  "text": "17",
+  "cell": "A4.5"
+ },
+ "A4.hm_row_range": {
+  "value": 4.637532891944657,
+  "text": "4.6",
+  "cell": "A4.5"
+ },
+ "A4.hm_col_range": {
+  "value": 1.710753968253968,
+  "text": "1.7",
+  "cell": "A4.5"
+ },
+ "A4.hm_best_driver": {
+  "value": "Lewis Hamilton",
+  "text": "Lewis Hamilton",
+  "cell": "A4.5"
+ },
+ "A4.hm_best_avg": {
+  "value": 3.109010270774977,
+  "text": "3.1",
+  "cell": "A4.5"
+ },
+ "A4.hm_second_driver": {
+  "value": "Max Verstappen",
+  "text": "Max Verstappen",
+  "cell": "A4.5"
+ },
+ "A4.hm_second_avg": {
+  "value": 3.835550887021475,
+  "text": "3.8",
+  "cell": "A4.5"
+ },
+ "A4.hm_top2_titles": {
+  "value": 9,
+  "text": "9",
+  "cell": "A4.5"
+ },
+ "A4.cons_n": {
+  "value": 201,
+  "text": "201",
+  "cell": "A4.6"
+ },
+ "A4.cons_r": {
+  "value": -0.18423047426225336,
+  "text": "-0.18",
+  "cell": "A4.6"
+ },
+ "A4.cons_r2": {
+  "value": 3.3940867646894803,
+  "text": "3%",
+  "cell": "A4.6"
+ },
+ "A4.cons_rho": {
+  "value": -0.20009555643838378,
+  "text": "-0.20",
+  "cell": "A4.6"
+ },
+ "A4.cons_r_all": {
+  "value": -0.16182092049188845,
+  "text": "-0.16",
+  "cell": "A4.6"
+ },
+ "A4.cons_r_med": {
+  "value": -0.4002474815408386,
+  "text": "-0.40",
+  "cell": "A4.6"
+ },
+ "A4.cons_r_race": {
+  "value": 0.028900387095788616,
+  "text": "+0.03",
+  "cell": "A4.6"
+ },
+ "A4.cons_r_med_abs": {
+  "value": 0.4002474815408386,
+  "text": "0.40",
+  "cell": "A4.6"
+ },
+ "A5.lead": {
+  "value": "McLaren",
+  "text": "McLaren",
+  "cell": "A5.1"
+ },
+ "A5.second": {
+  "value": "Ferrari",
+  "text": "Ferrari",
+  "cell": "A5.1"
+ },
+ "A5.lead_pts": {
+  "value": 666.0,
+  "text": "666",
+  "cell": "A5.1"
+ },
+ "A5.second_pts": {
+  "value": 652.0,
+  "text": "652",
+  "cell": "A5.1"
+ },
+ "A5.gap": {
+  "value": 14.0,
+  "text": "14",
+  "cell": "A5.1"
+ },
+ "A5.gap_pct": {
+  "value": 2.147239263803681,
+  "text": "2.1%",
+  "cell": "A5.1"
+ },
+ "A5.closest": {
+  "value": "the closest",
+  "text": "the closest",
+  "cell": "A5.1"
+ },
+ "A5.base": {
+  "value": 645,
+  "text": "645",
+  "cell": "A5.1"
+ },
+ "A5.visual_ratio": {
+  "value": 3.0,
+  "text": "3.0",
+  "cell": "A5.1"
+ },
+ "A5.visual_diff": {
+  "value": 200.0,
+  "text": "200%",
+  "cell": "A5.1"
+ },
+ "A5.lie_factor": {
+  "value": 93.14285714285714,
+  "text": "93",
+  "cell": "A5.1"
+ },
+ "C.circuit": {
+  "value": "Shanghai",
+  "text": "Shanghai",
+  "cell": "C.1"
+ },
+ "C.circuit_r": {
+  "value": 0.8048682260212049,
+  "text": "0.80",
+  "cell": "C.1"
+ },
+ "C.circuit_races": {
+  "value": 6,
+  "text": "6",
+  "cell": "C.1"
+ },
+ "C.extra_stops": {
+  "value": 3,
+  "text": "3",
+  "cell": "C.1"
+ },
+ "D.size_mb": {
+  "value": 5.918504,
+  "text": "5.9",
+  "cell": "D.1"
+ },
+ "D.all_dnf": {
+  "value": 16.947143872955678,
+  "text": "16.9%",
+  "cell": "D.2"
+ },
+ "D.all_pairs": {
+  "value": 1522,
+  "text": "1,522",
+  "cell": "D.2"
+ },
+ "D.mon_races": {
+  "value": 9,
+  "text": "9",
+  "cell": "D.2"
+ },
+ "D.mon_r": {
+  "value": 0.8779582017820196,
+  "text": "0.88",
+  "cell": "D.2"
+ },
+ "D.mon_und10": {
+  "value": -1.4893617021276595,
+  "text": "-1.5",
+  "cell": "D.2"
+ },
+ "D.mon_und_n": {
+  "value": 47,
+  "text": "47",
+  "cell": "D.2"
+ },
+ "D.mon_extra": {
+  "value": 0.0,
+  "text": "0%",
+  "cell": "D.2"
+ },
+ "D.mon_no": {
+  "value": 32.72727272727273,
+  "text": "33%",
+  "cell": "D.2"
+ },
+ "D.mon_pairs": {
+  "value": 66,
+  "text": "66",
+  "cell": "D.2"
+ },
+ "D.mon_dnf": {
+  "value": 17.582417582417584,
+  "text": "17.6%",
+  "cell": "D.2"
+ },
+ "D.mon_n_extra": {
+  "value": 11,
+  "text": "11",
+  "cell": "D.2"
+ },
+ "D.mon_last_race": {
+  "value": "2024 Monaco GP",
+  "text": "2024 Monaco GP",
+  "cell": "D.2"
+ },
+ "D.mon_last_changes": {
+  "value": 30,
+  "text": "30",
+  "cell": "D.2"
+ },
+ "F.n_charts": {
+  "value": 15,
+  "text": "15",
+  "cell": "F.1"
+ },
+ "F.n_plotly": {
+  "value": 0,
+  "text": "0",
+  "cell": "F.1"
+ },
+ "F.n_static": {
+  "value": 15,
+  "text": "15",
+  "cell": "F.1"
+ }
+}
